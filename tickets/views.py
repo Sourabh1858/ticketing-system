@@ -12,7 +12,7 @@ from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from accounts.forms import UserRegistrationForm  # Update this import
-from accounts.models import Activity,Project,NewUser
+from accounts.models import Activity,NewUser
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password

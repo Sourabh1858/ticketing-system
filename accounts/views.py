@@ -46,10 +46,11 @@ def login_view(request):
                 else:
                     messages.error(request, 'Invalid username or password.')
                     log_activity('anonymous', 'LOGIN',  level='WARNING', log=f'Failed login attempt: invalid username ({username}) or password.')
-        return render(request, 'accounts/login.html', {'form': LoginForm()})
+        # return render(request, 'accounts/login.html', {'form': LoginForm()})
+        return render(request, "accounts/index.html", {"form": LoginForm()})
     except Exception as e :
         print(e)
-        
+
 
 @login_required
 def admin_board_view(request):
