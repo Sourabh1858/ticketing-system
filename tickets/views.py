@@ -11,6 +11,12 @@ from .statistics import Statistics
 from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from accounts.forms import UserRegistrationForm  # Update this import
+from accounts.models import Activity,Project,NewUser
+from django.urls import reverse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import user_passes_test
 
 # You could store API keys in settings or a more secure storage like a database
 VALID_API_KEYS = {
@@ -270,7 +276,7 @@ def view_changes(request):
     changes = paginator.get_page(page_number)
     return render(request, 'tickets/changes.html', {'changes': changes, 'tickets_count': tickets_count})
 
-@login_required
+#@login_required
 def index(request):
     ticket_list = Ticket.objects.filter(hidden=False).exclude(status=Ticket.Status.CLOSED).exclude(status=Ticket.Status.CANCELLED).order_by('-updated_at')
     paginator = Paginator(ticket_list, 10)  # Show 10 tickets per page.
@@ -285,10 +291,25 @@ def index(request):
     }
     return render(request, 'tickets/index.html',context)
 
+# @login_required
+# def ticket_detail(request, ticket_id):
+#     ticket = Ticket.objects.get(pk=ticket_id)
+#     return render(request, 'tickets/ticket_detail.html', {'ticket': ticket, 'comments': ticket.comments.all().order_by('-created_at')})
 @login_required
 def ticket_detail(request, ticket_id):
-    ticket = Ticket.objects.get(pk=ticket_id)
-    return render(request, 'tickets/ticket_detail.html', {'ticket': ticket, 'comments': ticket.comments.all().order_by('-created_at')})
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    # Get the NewUser instance for the logged-in user
+    new_user = NewUser.objects.filter(user=request.user).first()  # Assuming 'user' is the related name
+    print("Project",new_user)
+    # Get the associated project from the NewUser instance
+    user_project = new_user.project if new_user else None
+    
+    return render(request, 'tickets/ticket_detail.html', {
+        'ticket': ticket,
+        'comments': ticket.comments.all().order_by('-created_at'),
+        'user_project': user_project
+    })
 
 @login_required
 def search_tickets(request):
@@ -350,6 +371,137 @@ def my_tasks(request):
     }
     return render(request, 'tickets/index.html',context)
 
+# @login_required
+# def add_user(request):
+#     if request.method == 'POST':
+#         form = UserRegistrationForm(request.POST)
+#         if form.is_valid():
+#             user = form.save(commit=False)
+#             user.set_password(form.cleaned_data['password'])  # Hash the password
+#             user.save()
+
+#             # Log the user creation activity
+#             Activity.objects.create(
+#                 user=request.user.username,  # Logged-in user's username
+#                 action=Activity.Type.CREATE,
+#                 level=Activity.Level.INFO,
+#                 log=f'User {user.username} was added successfully.'
+#             )
+
+#             messages.success(request, f'User {user.username} has been added successfully.')
+#             return redirect('tickets:index')  # Redirect to a success page or index
+#     else:
+#         form = UserRegistrationForm()  # Initialize the form for GET request
+#     return render(request, 'tickets/add_user.html', {'form': form})
+# @login_required
+# def add_user(request):
+#     if request.method == 'POST':
+#         form = UserRegistrationForm(request.POST)
+#         if form.is_valid():
+#             # Save the user and associated NewUser instance
+#             form.save()  # This now handles both User and NewUser saving
+
+#             user = form.cleaned_data['username']  # Get the username for logging
+
+#             # Log the user creation activity
+#             Activity.objects.create(
+#                 user=request.user.username,  # Logged-in user's username
+#                 action=Activity.Type.CREATE,
+#                 level=Activity.Level.INFO,
+#                 log=f'User {user} was added successfully.'
+#             )
+
+#             messages.success(request, f'User {user} has been added successfully.')
+#             return redirect('tickets:index')  # Redirect to a success page or index
+#     else:
+#         form = UserRegistrationForm()  # Initialize the form for GET request
+#     return render(request, 'tickets/add_user.html', {'form': form})
+# 
+@login_required
+def add_user(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        
+        if form.is_valid():
+            user = form.save(commit=False)  # Do not save yet
+            user.set_password(form.cleaned_data['password'])  # Hash the password
+            user.save()  # Save the user instance
+
+            # Handle the multiple selected projects
+            project_names = request.POST.getlist('project')  # Get the list of selected project names
+            projects_string = ', '.join(filter(None, project_names))
+
+            # Create a NewUser instance and save the project names
+            new_user = NewUser(user=user, project=projects_string)  # Store the project names
+            new_user.save()
+
+            # Log the user creation activity
+            Activity.objects.create(
+                user=request.user.username,
+                action=Activity.Type.CREATE,
+                level=Activity.Level.INFO,
+                log=f'User {user.username} was added successfully.'
+            )
+
+            messages.success(request, f'User {user.username} has been added successfully.')
+            return redirect('tickets:index')  # Redirect to a success page or index
+
+    else:
+        form = UserRegistrationForm()  # Initialize the form for GET request
+
+    # Pass the project options to the template
+    project_options = NewUser.PROJECT_OPTIONS
+    return render(request, 'tickets/add_user.html', {'form': form, 'project_options': project_options})
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_user(request):
+    users = User.objects.all()  # Get all users
+    projects = NewUser.PROJECT_OPTIONS  # Assuming this is a predefined project list
+
+    if request.method == "POST":
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        project_names = request.POST.getlist('project')  # Get selected projects
+
+        # Get the user to edit
+        user = get_object_or_404(User, username=username)
+
+        # Update user's data
+        user.email = email
+        if password:
+            user.password = make_password(password)  # Hash the password
+        user.save()
+
+        # Update project info for the user
+        new_user = get_object_or_404(NewUser, user=user)
+        
+        # Store selected projects as a comma-separated string
+        projects_string = ', '.join(filter(None, project_names))
+        new_user.project = projects_string  # Update the project names
+        new_user.save()
+
+        # Send a success message back via JSON
+        return JsonResponse({'success': True, 'message': f'User {username} updated successfully!'})
+
+    return render(request, 'tickets/edit_user.html', {'users': users, 'projects': projects})
+
+
+# API to get user data based on selected username
+@user_passes_test(lambda u: u.is_superuser)
+def get_user_data(request, username):
+    user = get_object_or_404(User, username=username)
+    new_user = get_object_or_404(NewUser, user=user)
+    projects = new_user.project.split(', ')  # Assuming projects are stored as a string
+
+    # Return the user data as JSON
+    data = {
+        'email': user.email,
+        'projects': projects
+    }
+    return JsonResponse(data)
+
+
 @login_required
 def in_progress_view(request):
     ticket_list = Ticket.objects.filter(hidden=False, status=Ticket.Status.IN_PROGRESS).order_by('-updated_at')
@@ -364,39 +516,76 @@ def in_progress_view(request):
     }
     return render(request, 'tickets/index.html',context)
 
+# @login_required
+# def new_ticket(request):
+#     # if not request.user.has_perm('tickets.add_ticket'):
+#     #     messages.error(request, 'You do not have permission to create a ticket')
+#     #     return redirect('tickets:index')
+#     if request.method == 'POST':
+#         user = User.objects.get(pk=request.user.id)
+#         title = request.POST['title']
+#         description = request.POST['description']
+#         status = request.POST['status']
+#         priority = request.POST['priority']
+#         category = request.POST['category']
+#         assignee = User.objects.get(pk=request.POST['assignee'])
+#         due_date = request.POST['due_date']
+#         if due_date == "":
+#             due_date = None
+#         if not assignee:
+#             assignee = user
+        
+#         ticket = Ticket.objects.create(
+#             issuer=request.user,
+#             assignee=assignee,
+#             title=title,
+#             description=description,
+#             status=status,
+#             priority=priority,
+#             category=category,
+#             due_date=due_date
+#         )
+#         log_activity(ticket, request.user, "Created ticket")
+#         return render(request, 'tickets/ticket_detail.html', {'ticket': ticket})
+#     else:
+#         return render(request, 'tickets/new_ticket.html', {"form": TicketForm()})
 @login_required
 def new_ticket(request):
-    if not request.user.has_perm('tickets.add_ticket'):
-        messages.error(request, 'You do not have permission to create a ticket')
-        return redirect('tickets:index')
     if request.method == 'POST':
-        user = User.objects.get(pk=request.user.id)
-        title = request.POST['title']
-        description = request.POST['description']
-        status = request.POST['status']
-        priority = request.POST['priority']
-        category = request.POST['category']
-        assignee = User.objects.get(pk=request.POST['assignee'])
-        due_date = request.POST['due_date']
-        if due_date == "":
-            due_date = None
-        if not assignee:
-            assignee = user
-        
-        ticket = Ticket.objects.create(
-            issuer=request.user,
-            assignee=assignee,
-            title=title,
-            description=description,
-            status=status,
-            priority=priority,
-            category=category,
-            due_date=due_date
-        )
-        log_activity(ticket, request.user, "Created ticket")
-        return render(request, 'tickets/ticket_detail.html', {'ticket': ticket})
+        form = TicketForm(request.POST)
+        if form.is_valid():
+            ticket = form.save(commit=False)
+            ticket.issuer = request.user
+            ticket.save()
+            log_activity(ticket, request.user, "Created ticket")
+            return redirect('tickets:index')  # Redirect to the ticket list after creation
     else:
-        return render(request, 'tickets/new_ticket.html', {"form": TicketForm()})
+        form = TicketForm()
+    
+    return render(request, 'tickets/new_ticket.html', {'form': form})
+
+
+@login_required
+def filter_assignees_by_project(request):
+    project = request.GET.get('project')
+    users_with_project = NewUser.objects.filter(project=project).values_list('user', flat=True)
+    assignees = User.objects.filter(id__in=users_with_project)
+
+    if assignees.exists():
+        assignee_options = ''.join([f'<option value="{user.id}">{user.username}</option>' for user in assignees])
+        response_data = {
+            'assignee_options': assignee_options,
+            'show_toast': False  # No toast needed when users are found
+        }
+    else:
+        add_user_url = reverse('tickets:add_user')  # URL to the add user page
+        response_data = {
+            'assignee_options': '<option value="">No users available</option>',
+            'show_toast': True,  # Show toast when no users are found
+            'toast_message': f'No users found for this project. <a href="{add_user_url}">Click here</a> to add a user and project.'
+        }
+
+    return JsonResponse(response_data)
     
 @login_required
 def edit_ticket(request, ticket_id):

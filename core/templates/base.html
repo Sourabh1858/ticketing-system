@@ -1,4 +1,4 @@
-{% load static %}
+{% comment %} {% load static %}
 <HTML>
     <HEAD>
         <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
@@ -40,4 +40,524 @@
         <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.11"></script>
         {% endblock %}
     </BODY>
-</HTML>
+</HTML> {% endcomment %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TTS{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+
+    <div aria-live="polite" aria-atomic="true" class="bg-body-secondary position-relative bd-example-toasts rounded-3">
+    <div class="toast-container p-3" id="toastPlacement">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Notification</strong>
+                        <small class="text-muted">{{ message.timestamp }}</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="blur-background" id="blur-background"></div>
+
+<script>
+const toastElements = document.querySelectorAll('.toast');
+const blurBackground = document.getElementById('blur-background');
+
+if (toastElements.length > 0) {
+  blurBackground.style.display = 'block'; // Show the blur background
+}
+
+toastElements.forEach(toast => {
+  const bsToast = new bootstrap.Toast(toast, {
+    delay: 5000 // Adjust delay in milliseconds
+  });
+
+  // Show the toast
+  bsToast.show();
+
+  // Hide the blur background when toast is closed
+  toast.addEventListener('hidden.bs.toast', () => {
+    checkToasts();
+  });
+});
+
+// Check and hide the blur background if no toasts are present
+function checkToasts() {
+  const visibleToasts = document.querySelectorAll('.toast.show');
+  if (visibleToasts.length === 0) {
+    console.log("Toast display")
+    blurBackground.style.display = 'none'; // Hide blur background
+  }
+}
+
+document.addEventListener('DOMContentLoaded', checkToasts);
+</script>
+
+
+<style>
+    /* CSS for blurred background */
+    .blur-background {
+        position: fixed; 
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8); /* Slightly opaque background */
+        backdrop-filter: blur(5px); /* Blur effect */
+        display: none; /* Initially hidden */
+        z-index: 1000; /* Behind the toast but above other content */
+    }
+
+    /* CSS for toast container */
+    .toast-container {
+        position: fixed;
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust position to center */
+        z-index: 1050; /* Ensure toasts are above the blur background */
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        width: 250px; 
+        height: calc(100vh - 20px); /* Adjust height for top margin */
+        background-color: #f8f9fa; 
+        padding: 15px; 
+        position: fixed; 
+        left: 0; /* Align to the left */
+        top: 20px; /* Add margin from the top */
+        overflow-y: auto; 
+        transition: left 0.3s ease; /* Smooth transition for sidebar */
+        z-index: 100; /* Ensure sidebar is above main content */
+    }
+
+    /* Main Content Adjustment */
+    .main-content {
+        margin-left: 250px; /* Reduced margin-left for main content */
+        transition: margin-left 0.3s ease; /* Smooth transition for main content */
+        padding: 20px; /* Padding for main content */
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .sidebar {
+            left: -250px; /* Start hidden off-screen */
+            top: 0; /* Reset top for small screens */
+            height: 100vh; /* Full height on small screens */
+        }
+        .main-content {
+            margin-left: 0; /* No margin when sidebar is hidden */
+        }
+    }
+    </style>
+
+
+
+
+
+    <main role="main" class="container-fluid" >
+        <div class="row">
+            <div class="col-md-3">
+                {% include 'sidebar.html' %}
+            </div>
+            
+            <div class="col-md-9 main-content">
+                <div class="container" style="padding-top: 30px;">
+                    <div id="clock"></div>
+                    <div id="content">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <button id="toggleSidebar" class="btn btn-primary" style="display: none;">&#9776;</button>
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script type="module" src="{% static 'js/jpost.js' %}"></script>
+    <script type="module" src="{% static 'js/widgets.js' %}"></script>
+    <script type="module" src="{% static 'js/global_head.js' %}"></script>
+    <script type="module" src="{% static 'js/clock.js' %}"></script>
+    <script type="module" src="{% static 'js/tickets.js' %}"></script>
+    <script src="/static/js/global_foot.js" type="module"></script>
+    {% block end_js %}
+    <script>
+        // Toggle sidebar functionality
+        const sidebar = document.querySelector('.sidebar');
+        const toggleButton = document.getElementById('toggleSidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        toggleButton.addEventListener('click', () => {
+            const isVisible = sidebar.style.left === '0px';
+            sidebar.style.left = isVisible ? '-250px' : '0px'; // Hide or show
+            mainContent.style.marginLeft = isVisible ? '0' : '250px'; // Adjust main content margin
+        });
+
+        // Update the visibility of the toggle button based on screen size
+        function updateToggleButtonVisibility() {
+            if (window.innerWidth <= 768) {
+                toggleButton.style.display = 'block'; // Show button on small screens
+                sidebar.style.left = '-250px'; // Ensure sidebar is hidden
+                mainContent.style.marginLeft = '0'; // No margin when sidebar is hidden
+            } else {
+                toggleButton.style.display = 'none'; // Hide button on larger screens
+                sidebar.style.left = '0px'; // Show sidebar by default on larger screens
+                mainContent.style.marginLeft = '250px'; // Adjust main content margin
+            }
+        }
+
+        window.addEventListener('resize', updateToggleButtonVisibility);
+        window.addEventListener('load', updateToggleButtonVisibility);
+    </script>
+    {% endblock %}
+</body>
+</html> 
+{% comment %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TTS{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+    <style>
+        body {
+            display: flex; /* Use flexbox for layout */
+            height: 100vh; /* Full height of the viewport */
+            margin: 0; /* Remove default margin */
+            overflow: hidden; /* Prevent body overflow */
+        }
+
+        .sidebar {
+            width: 200px; /* Width of the sidebar */
+            background-color: #f8f9fa; /* Background color */
+            padding: 15px; /* Padding inside sidebar */
+            overflow-y: auto; /* Allow scrolling if content is taller */
+            position: fixed; /* Fix the sidebar in place */
+            height: calc(100% - 85px); /* Full height minus navbar height */
+            margin-top: 85px; /* Adjusted for navbar */
+        }
+
+        .main-content {
+            margin-left: 0px; /* Remove margin for main content */
+            margin-right: 450px;
+            padding: 20px; /* Padding for the main content */
+            flex: 1; /* Take remaining space */
+            overflow-y: auto; /* Allow scrolling if content is tall */
+            margin-top: 85px; /* Adjusted for navbar */
+        }
+        .main-content {
+            margin-left: 200px; /* Align with the sidebar */
+            padding: 20px; /* Padding for the main content */
+            flex: 1; /* Take remaining space */
+            overflow-y: auto; /* Allow scrolling if content is tall */
+            margin-top: 85px; /* Adjusted for navbar height */
+            height: calc(100% - 85px); /* Full height minus navbar height */
+        }
+        
+
+        .navbar {
+            position: fixed; /* Keep navbar fixed at the top */
+            width: calc(100% - 0px); /* Width adjusted to account for sidebar */
+            z-index: 100; /* Ensure it is above other content */
+            top: 0; /* Position at the top */
+            left: 0px; /* Position to the right of the sidebar */
+        }
+
+        /* Prevent overlap */
+        .navbar + .sidebar {
+            margin-top: 56px; /* Height of the navbar */
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <!-- Always Open Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem;">Menu</h5>
+        {% if user.is_authenticated %}
+            <ul class="navbar-nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:index' %}">All tickets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:my_tasks' %}">My Tasks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:add_user' %}">Add User</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:in_progress' %}">In Progress</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:list_issues' %}">Open Issues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:list_closed_tickets' %}">Closed Tickets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:list_hidden_tickets' %}">Hidden Tickets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:view_changes' %}">Activity Log</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:new_ticket' %}">New Ticket</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:statistics' %}">Stats</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tickets:view_help' %}">Help</a>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
+
+    <!-- Main content area -->
+    <main role="main" class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto">
+                    {% include 'messages.html' %}
+                </div>
+                <div class="container">
+                    <div id="clock"></div>
+                    <div id="content">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script type="module" src="{% static 'js/jpost.js' %}"></script>
+    <script type="module" src="{% static 'js/widgets.js' %}"></script>
+    <script type="module" src="{% static 'js/global_head.js' %}"></script>
+    <script type="module" src="{% static 'js/clock.js' %}"></script>
+    <script type="module" src="{% static 'js/tickets.js' %}"></script>
+    <script src="/static/js/global_foot.js" type="module"></script>
+    {% block end_js %}
+    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.11"></script>
+    {% endblock %}
+</body>
+</html> {% endcomment %}
+
+{% comment %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TTS{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div aria-live="polite" aria-atomic="true" class="bg-body-secondary position-relative bd-example-toasts rounded-3">
+        <div class="toast-container p-3" id="toastPlacement">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">Notification</strong>
+                            <small class="text-muted">{{ message.timestamp }}</small>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="blur-background" id="blur-background"></div>
+
+    <script>
+        const toastElements = document.querySelectorAll('.toast');
+        const blurBackground = document.getElementById('blur-background');
+
+        if (toastElements.length > 0) {
+            blurBackground.style.display = 'block'; // Show the blur background
+        }
+
+        toastElements.forEach(toast => {
+            const bsToast = new bootstrap.Toast(toast, {
+                delay: 5000 // Adjust delay in milliseconds
+            });
+
+            // Show the toast
+            bsToast.show();
+
+            // Hide the blur background when toast is closed
+            toast.addEventListener('hidden.bs.toast', () => {
+                checkToasts();
+            });
+        });
+
+        // Check and hide the blur background if no toasts are present
+        function checkToasts() {
+            const visibleToasts = document.querySelectorAll('.toast.show');
+            if (visibleToasts.length === 0) {
+                blurBackground.style.display = 'none'; // Hide blur background
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkToasts);
+    </script>
+
+    <style>
+        /* CSS for blurred background */
+        .blur-background {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8); /* Slightly opaque background */
+            backdrop-filter: blur(5px); /* Blur effect */
+            display: none; /* Initially hidden */
+            z-index: 1000; /* Behind the toast but above other content */
+        }
+
+        /* CSS for toast container */
+        .toast-container {
+            position: fixed;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust position to center */
+            z-index: 1050; /* Ensure toasts are above the blur background */
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px; 
+            height: 100vh; 
+            background-color: #f8f9fa; 
+            padding: 15px; 
+            position: fixed; 
+            left: 0; /* Align to the left */
+            top: 0; /* Start from the top */
+            overflow-y: auto; 
+            transition: left 0.3s ease; /* Smooth transition for sidebar */
+            z-index: 100; /* Ensure sidebar is above main content */
+        }
+
+        /* Main Content Adjustment */
+        .main-content {
+            margin-left: 250px; /* Space for sidebar */
+            transition: margin-left 0.3s ease; /* Smooth transition for main content */
+            padding: 20px; /* Padding for main content */
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -250px; /* Start hidden off-screen */
+            }
+            .main-content {
+                margin-left: 0; /* No margin when sidebar is hidden */
+            }
+        }
+    </style>
+
+    <main role="main" class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 sidebar">
+                {% include 'sidebar.html' %}
+            </div>
+            
+            <div class="col-md-9 main-content">
+                <div class="container">
+                    <div id="clock"></div>
+                    <div id="content">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <button id="toggleSidebar" class="btn btn-primary" style="display: none;">&#9776;</button> <!-- Toggle Button -->
+
+    <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script type="module" src="{% static 'js/jpost.js' %}"></script>
+    <script type="module" src="{% static 'js/widgets.js' %}"></script>
+    <script type="module" src="{% static 'js/global_head.js' %}"></script>
+    <script type="module" src="{% static 'js/clock.js' %}"></script>
+    <script type="module" src="{% static 'js/tickets.js' %}"></script>
+    <script src="/static/js/global_foot.js" type="module"></script>
+    {% block end_js %}
+    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.11"></script>
+
+    <script>
+        // Toggle sidebar functionality
+        const sidebar = document.querySelector('.sidebar');
+        const toggleButton = document.getElementById('toggleSidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        toggleButton.addEventListener('click', () => {
+            const isVisible = sidebar.style.left === '0px';
+            sidebar.style.left = isVisible ? '-250px' : '0px'; // Hide or show
+            mainContent.style.marginLeft = isVisible ? '0' : '250px'; // Adjust main content margin
+        });
+
+        // Update the visibility of the toggle button based on screen size
+        function updateToggleButtonVisibility() {
+            if (window.innerWidth <= 768) {
+                toggleButton.style.display = 'block'; // Show button on small screens
+                sidebar.style.left = '-250px'; // Ensure sidebar is hidden
+                mainContent.style.marginLeft = '0'; // No margin when sidebar is hidden
+            } else {
+                toggleButton.style.display = 'none'; // Hide button on larger screens
+                sidebar.style.left = '0px'; // Show sidebar by default on larger screens
+                mainContent.style.marginLeft = '250px'; // Adjust main content margin
+            }
+        }
+
+        window.addEventListener('resize', updateToggleButtonVisibility);
+        window.addEventListener('load', updateToggleButtonVisibility);
+    </script>
+    {% endblock %}
+</body>
+</html> {% endcomment %}
+
+
+
+
+
+
+
+

@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="width:100%">
+    <h2>Edit User</h2>
+
+    <!-- Form to edit user -->
+    <form id="editUserForm" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <select id="username" name="username" class="form-control">
+                <option value="">Select a user</option>
+                {% for user in users %}
+                    <option value="{{ user.username }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password (Leave blank to keep current password):</label>
+            <input type="password" id="password" name="password" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="project">Project:</label>
+            <select id="project" name="project" class="form-control" multiple="multiple">
+                {% for value, label in projects %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div><br>
+        <button type="submit" class="btn btn-primary">Update User</button>
+    </form>
+
+    <!-- Success message box -->
+    <div id="successMessage" class="alert alert-success mt-3" style="display:none;"></div>
+
+    <a href="{% url 'tickets:index' %}" class="btn btn-secondary mt-3">Back to Tickets</a>
+</div>
+
+<!-- Include Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Initialize Select2 on the project select element
+    $('#project').select2({
+      placeholder: 'Select project(s)',
+      allowClear: true
+    });
+
+    // Check if there is a success message in localStorage and show it
+    if (localStorage.getItem('successMessage')) {
+      $('#successMessage').text(localStorage.getItem('successMessage')).show();
+      localStorage.removeItem('successMessage');  // Remove message after showing
+    }
+
+    // Handle form submission via AJAX
+    $('#editUserForm').on('submit', function(e) {
+      e.preventDefault();  // Prevent form from submitting the traditional way
+
+      var formData = $(this).serialize();  // Serialize form data
+
+      $.ajax({
+        type: 'POST',
+        url: '',  // Use the same URL
+        data: formData,
+        success: function(response) {
+          if (response.success) {
+            // Store success message in localStorage
+            localStorage.setItem('successMessage', response.message);
+            // Refresh the page after a slight delay to show the message
+            setTimeout(function() {
+              window.location.reload();
+            }, 200);  // Small delay to ensure the message is stored before reload
+          }
+        },
+        error: function(xhr, status, error) {
+          console.log('Error: ' + error);  // Handle any error responses
+        }
+      });
+    });
+
+    // Populate user data when username is selected
+    $('#username').change(function() {
+      var username = $(this).val();
+      if (username) {
+        $.getJSON('/get-user-data/' + username + '/', function(data) {
+          $('#email').val(data.email);
+          $('#project').val(data.projects).trigger('change');  // Populate and trigger Select2 update
+        });
+      } else {
+        $('#email').val('');
+        $('#project').val(null).trigger('change');  // Clear fields
+      }
+    });
+  });
+</script>
+{% endblock %}
+
+
+
+
+{% comment %} {% extends 'base.html' %}
+
+{% block title %}Add User{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="width:100%">
+    <h2>Add User</h2>
+    
+    <form id="editUserForm" method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="username">Username:</label>
+        <select id="username" name="username" class="form-control">
+            <option value="">Select a user</option>
+            {% for user in users %}
+                <option value="{{ user.username }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password (Leave blank to keep current password):</label>
+        <input type="password" id="password" name="password" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="project">Project:</label>
+        <input type="text" id="project" name="project" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update User</button>
+</form>
+
+    <a href="{% url 'tickets:index' %}" class="btn btn-secondary mt-3">Back to Tickets</a>
+</div>
+
+<!-- Include Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Initialize Select2 on the project select element
+    $('#project').select2({
+      placeholder: 'Select project(s)',
+      allowClear: true
+    });
+  });
+</script>
+<script>
+    document.getElementById('username').addEventListener('change', function() {
+        const username = this.value;
+        if (username) {
+            fetch(`/get-user-data/${username}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('project').value = data.projects.join(', ');
+                });
+        } else {
+            // Clear fields if no user selected
+            document.getElementById('email').value = '';
+            document.getElementById('project').value = '';
+        }
+    });
+</script>
+{% endblock %} {% endcomment %}

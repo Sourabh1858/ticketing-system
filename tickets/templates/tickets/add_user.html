@@ -1,0 +1,51 @@
+<!-- templates/add_user.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Add User{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="width:100%">
+    <h2>Add User</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.username.label }} {{ form.username }}<br>
+        {{ form.email.label }} {{ form.email }}<br>
+        {{ form.password.label }} {{ form.password }}<br>
+
+        <label for="project">Select Project(s):</label>
+        <select id="project" name="project" class="form-control" multiple required style="width: 100%">
+            {% for value, label in project_options %}
+                <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Add User</button>
+    </form>
+
+    <a href="{% url 'tickets:index' %}" class="btn btn-secondary mt-3">Back to Tickets</a>
+</div>
+
+<!-- Include Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Initialize Select2 on the project select element
+    $('#project').select2({
+      placeholder: 'Select project(s)',
+      allowClear: true
+    });
+  });
+</script>
+{% endblock %}
+
+
+
+ 
+

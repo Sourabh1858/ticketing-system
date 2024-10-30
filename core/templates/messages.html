@@ -1,8 +1,76 @@
-{% if messages %}
+{% comment %} {% if messages %}
     {% for message in messages %}
-    <div class="alert alert-primary  alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     {% endfor %}
-{% endif %}
+{% endif %} {% endcomment %}
+
+
+ {% comment %} <div aria-live="polite" aria-atomic="true" class="bg-body-secondary position-relative bd-example-toasts rounded-3">
+  <div class="toast-container p-3" id="toastPlacement">
+    {% if messages %}
+      {% for message in messages %}
+      <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto">TTS</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          {{ message }}
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>  {% endcomment %}
+
+
+{% comment %} <style>
+  #toastContainer {
+    z-index: 1050; /* Ensure the toast is above other content */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full height */
+  }
+
+  .toast-container {
+    max-width: 90%; /* Set a maximum width for responsiveness */
+    width: auto; /* Allow the width to adjust based on content */
+  }
+
+  .toast {
+    max-width: 400px; /* Set a maximum width for the toast */
+    width: auto; /* Allow the toast width to be determined by content */
+  }
+
+  .toast-body {
+    white-space: normal; /* Ensure text wraps normally */
+    word-wrap: break-word; /* Allow long words to break to the next line */
+    overflow-wrap: break-word; /* Additional property for better word breaking */
+    line-height: 1.5; /* Adjust line height for readability */
+  }
+
+  @media (max-width: 576px) {
+    .toast-container {
+      width: 100%; /* Full width on smaller screens */
+      max-width: none; /* Remove max width restriction */
+    }
+  }
+</style> {% endcomment %}
+
+<!-- messages.html -->
+{% comment %} <div class="message-container">
+    <!-- Your message content goes here -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+</div> {% endcomment %}
+
+
+
+

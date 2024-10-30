@@ -1,0 +1,157 @@
+{% comment %} <div class="sidebar" id="sidebar" 
+    style="width: 250px; 
+    height: 100vh;
+    background-color: #f8f9fa;; 
+    padding: 15px; position: fixed; 
+    overflow-y: auto;
+    margin-top: -14px;">
+    <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem;">Menu</h5>
+    {% if user.is_authenticated %}
+        <ul class="navbar-nav flex-column" >
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:index' %}">All tickets</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:my_tasks' %}">My Tasks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:add_user' %}">Add User</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:in_progress' %}">In Progress</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_issues' %}">Open Issues</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_closed_tickets' %}">Closed Tickets</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_hidden_tickets' %}">Hidden Tickets</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:view_changes' %}">Activity Log</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:new_ticket' %}">New Ticket</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:statistics' %}">Stats</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:view_help' %}">Help</a>
+            </li>
+        </ul>
+    {% endif %}
+</div>  {% endcomment %}
+<!-- Toggle Button (Hamburger Icon) -->
+<button id="toggleSidebar" 
+    style="font-size: 1.5rem; 
+    position: fixed; 
+    margin-top:20px;
+    top: 20px; 
+    left: 20px; 
+    z-index: 1000; 
+    background-color: #007bff; 
+    color: white; 
+    border: none; 
+    padding: 10px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    display: none;"> <!-- Initially hidden -->
+    &#9776; <!-- Hamburger icon -->
+</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar" 
+    style="width: 250px; 
+    height: 100vh; 
+    background-color: #f8f9fa; 
+    padding: 15px; 
+    position: fixed; 
+    left: -250px; /* Start hidden off-screen */
+    overflow-y: auto; 
+    transition: left 0.3s ease; /* Smooth transition */
+    margin-top: -14px;">
+    <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem;">Menu</h5>
+    {% if user.is_authenticated %}
+        <ul class="navbar-nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:index' %}">All tickets</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:my_tasks' %}">My Tasks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:add_user' %}">Add User</a>
+            </li>
+            {% if user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:edit_user' %}">Edit User</a>
+                </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:in_progress' %}">In Progress</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_issues' %}">Open Issues</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_closed_tickets' %}">Closed Tickets</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_hidden_tickets' %}">Hidden Tickets</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:view_changes' %}">Activity Log</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:new_ticket' %}">New Ticket</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:statistics' %}">Stats</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:view_help' %}">Help</a>
+            </li>
+        </ul>
+    {% endif %}
+</div>
+
+<!-- JavaScript for Toggle Functionality -->
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleButton = document.getElementById('toggleSidebar');
+
+    // Function to toggle the sidebar visibility
+    toggleButton.addEventListener('click', () => {
+        const isVisible = sidebar.style.left === '0px';
+        sidebar.style.left = isVisible ? '-250px' : '0px'; // Hide or show
+    });
+
+    // Update the visibility of the toggle button based on screen size
+    function updateToggleButtonVisibility() {
+        if (window.innerWidth <= 768) {
+            toggleButton.style.display = 'block'; // Show button on small screens
+        } else {
+            toggleButton.style.display = 'none'; // Hide button on larger screens
+            sidebar.style.left = '0px'; // Show sidebar by default on larger screens
+        }
+    }
+
+    window.addEventListener('resize', updateToggleButtonVisibility);
+    window.addEventListener('load', updateToggleButtonVisibility);
+</script>
+
+<style>
+    /* CSS for Responsive Sidebar */
+    @media (max-width: 768px) {
+        .sidebar {
+            left: -250px; /* Start hidden off-screen */
+            width: 250px; /* Width of the sidebar */
+        }
+    }
+</style>
+
+
+

@@ -13,40 +13,43 @@ from .models import Activity
 
 
 def login_view(request):
-    if request.method == 'POST':
-        sudo = False
-        username = request.POST['username']
-        if ":" in username:
-            username = username.split(":")
-            sudoer = username[0]
-            target_username = username[1]
-            sudo = True
-        password = request.POST['password']
-        if sudo:
-            user = authenticate(request, username=sudoer, password=password)
-            if user is not None:
-                if user.is_superuser:
-                    target_user = User.objects.get(username=target_username)
-                    login(request, target_user)
-                    log_activity(target_user, 'LOGIN',level='INFO' ,log='Sudo login by ' + sudoer)
+    try:
+        if request.method == 'POST':
+            sudo = False
+            username = request.POST['username']
+            if ":" in username:
+                username = username.split(":")
+                sudoer = username[0]
+                target_username = username[1]
+                sudo = True
+            password = request.POST['password']
+            if sudo:
+                user = authenticate(request, username=sudoer, password=password)
+                if user is not None:
+                    if user.is_superuser:
+                        target_user = User.objects.get(username=target_username)
+                        login(request, target_user)
+                        log_activity(target_user, 'LOGIN',level='INFO' ,log='Sudo login by ' + sudoer)
+                        return redirect('tickets:index')
+                    else:
+                        log_activity(user.username,'LOGIN', level='WARNING', log='Failed sudo login attempt: not authorized to use sudo.')
+                        messages.error(request, 'You are not authorized to use sudo.')
+                else:
+                    log_activity('anonymous','LOGIN',  level='WARNING', log=f'Failed sudo login attempt: invalid username ({sudoer}) or password.')
+                    messages.error(request, 'Invalid username or password.')
+            else:
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    log_activity(user.username, 'LOGIN', level='INFO', log=f'Successful login.')
                     return redirect('tickets:index')
                 else:
-                    log_activity(user.username,'LOGIN', level='WARNING', log='Failed sudo login attempt: not authorized to use sudo.')
-                    messages.error(request, 'You are not authorized to use sudo.')
-            else:
-                log_activity('anonymous','LOGIN',  level='WARNING', log=f'Failed sudo login attempt: invalid username ({sudoer}) or password.')
-                messages.error(request, 'Invalid username or password.')
-        else:
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                log_activity(user.username, 'LOGIN', level='INFO', log=f'Successful login.')
-                return redirect('tickets:index')
-            else:
-                messages.error(request, 'Invalid username or password.')
-                log_activity('anonymous', 'LOGIN',  level='WARNING', log=f'Failed login attempt: invalid username ({username}) or password.')
-                
-    return render(request, 'accounts/login.html', {'form': LoginForm()})
+                    messages.error(request, 'Invalid username or password.')
+                    log_activity('anonymous', 'LOGIN',  level='WARNING', log=f'Failed login attempt: invalid username ({username}) or password.')
+        return render(request, 'accounts/login.html', {'form': LoginForm()})
+    except Exception as e :
+        print(e)
+        
 
 @login_required
 def admin_board_view(request):
@@ -66,7 +69,7 @@ def admin_board_view(request):
 def logout_view(request):
     log_activity(request.user, 'LOGOUT', level='INFO', log='Logout.')
     logout(request)
-    return redirect('login')
+    return render(request,'pages/landing_page.html')
 
 @login_required
 def profile_view(request):

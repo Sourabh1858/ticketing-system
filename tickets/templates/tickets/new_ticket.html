@@ -1,6 +1,109 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container mt-4">
+    <!-- Toast notifications for messages -->
+    <div aria-live="polite" aria-atomic="true" class="bg-body-secondary position-relative bd-example-toasts rounded-3">
+        <div class="toast-container p-3" id="toastPlacement">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">Notification</strong>
+                            <small class="text-muted">{{ message.timestamp }}</small>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ message|safe }}  <!-- Allow safe HTML for links in the message -->
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <h1 class="mb-4">New Ticket</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <!-- Project selection dropdown -->
+        <div class="mb-3">
+            <label for="{{ form.project.id_for_label }}" class="form-label">{{ form.project.label }}</label>
+            {{ form.project }}
+        </div>
+
+        <!-- Assignee dropdown -->
+        <div class="mb-3">
+            <label for="{{ form.assignee.id_for_label }}" class="form-label">{{ form.assignee.label }}</label>
+            {{ form.assignee }}
+        </div>
+
+        <!-- Other fields -->
+        {% for field in form %}
+            {% if not field.name == "project" and not field.name == "assignee" %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Event listener to change assignee options based on project selection
+        $('#id_project').change(function() {
+            var project = $(this).val();
+            $.ajax({
+                url: '{% url "tickets:filter_assignees_by_project" %}',  // URL to the view
+                data: {
+                    'project': project
+                },
+                success: function(response) {
+                    // Update the assignee select dropdown with the new options
+                    $('#id_assignee').html(response.assignee_options);
+
+                    // If the response indicates to show a toast, trigger it
+                    if (response.show_toast) {
+                        var toastHTML = `
+                            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="toast-header">
+                                    <strong class="me-auto">Notification</strong>
+                                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                                <div class="toast-body">
+                                    ${response.toast_message}
+                                </div>
+                            </div>`;
+                        
+                        // Append the toast message to the toast container
+                        $('#toastPlacement').html(toastHTML);
+                    }
+                },
+                error: function() {
+                    // Handle error cases here if needed
+                    alert('An error occurred while fetching the assignees.');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
+
+
+{% comment %} {% extends "base.html" %}
+
+{% block content %}
 {% include "tickets/header.html" %}
 <div class="container mt-4">
     <h1 class="mb-4">New Ticket</h1>
@@ -37,4 +140,29 @@
 	<a href="{% url 'tickets:index' %}" class="btn btn-secondary">Back to list</a>
     </form>
 </div>
-{% endblock %}
+<!-- JavaScript for dynamically loading assignees based on project selection -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#id_project').change(function() {
+            var project = $(this).val();
+            $.ajax({
+                url: "{% url 'tickets:get_assignees' %}",
+                data: {
+                    'project': project
+                },
+                success: function(data) {
+                    var assigneeField = $('#id_assignee');
+                    assigneeField.empty();  // Clear existing options
+                    $.each(data.assignees, function(key, value) {
+                        assigneeField.append($('<option>', {
+                            value: value.id,
+                            text: value.username
+                        }));
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} {% endcomment %}

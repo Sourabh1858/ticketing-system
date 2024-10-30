@@ -29,9 +29,9 @@ SECRET_KEY = 'django-insecure-^^%+xm_==0r1@k%wg)p=5p6x1+$(z)f_z)na2egc0a5_ywp+q-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['tts.cyborg.fi', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-CSRF_TRUSTED_ORIGINS = ['https://tts.cyborg.fi']
+#CSRF_TRUSTED_ORIGINS = ['http://tts.cyborg.fi']
 
 
 # Application definition
@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    # 'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,32 +81,41 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "ticket_management_system",
+        "USER": "postgres",
+        "PASSWORD": "Markytics1234",
+        "HOST": "34.100.144.237",
+        "PORT": 5432,
+    },
+}
+# DB_ENGINE   = os.getenv('DB_ENGINE'   , None)
+# DB_USERNAME = os.getenv('DB_USERNAME' , None)
+# DB_PASS     = os.getenv('DB_PASS'     , None)
+# DB_HOST     = os.getenv('DB_HOST'     , None)
+# DB_PORT     = os.getenv('DB_PORT'     , None)
+# DB_NAME     = os.getenv('DB_NAME'     , None)
 
-DB_ENGINE   = os.getenv('DB_ENGINE'   , None)
-DB_USERNAME = os.getenv('DB_USERNAME' , None)
-DB_PASS     = os.getenv('DB_PASS'     , None)
-DB_HOST     = os.getenv('DB_HOST'     , None)
-DB_PORT     = os.getenv('DB_PORT'     , None)
-DB_NAME     = os.getenv('DB_NAME'     , None)
-
-if DB_ENGINE and DB_NAME and DB_USERNAME:
-    DATABASES = { 
-      'default': {
-        'ENGINE'  : 'django.db.backends.' + DB_ENGINE, 
-        'NAME'    : DB_NAME,
-        'USER'    : DB_USERNAME,
-        'PASSWORD': DB_PASS,
-        'HOST'    : DB_HOST,
-        'PORT'    : DB_PORT,
-        }, 
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'db.sqlite3',
-        }
-    }
+# if DB_ENGINE and DB_NAME and DB_USERNAME:
+#     DATABASES = { 
+#       'default': {
+#         'ENGINE'  : 'django.db.backends.' + DB_ENGINE, 
+#         'NAME'    : DB_NAME,
+#         'USER'    : DB_USERNAME,
+#         'PASSWORD': DB_PASS,
+#         'HOST'    : DB_HOST,
+#         'PORT'    : DB_PORT,
+#         }, 
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': 'db.sqlite3',
+#         }
+#     }
 
 
 
@@ -127,6 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+#AUTH_USER_MODEL = 'accounts.User'  
 
 
 # Internationalization

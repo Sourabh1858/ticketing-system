@@ -10,3 +10,20 @@
   .notification-tag.show {
     display: inline-block; /* Or block, depending on where you place it */
   }
+/* Optional: Customize the offcanvas sidebar */
+.offcanvas {
+  width: 250px;
+  /* Adjust the width as necessary */
+}
+
+.offcanvas-header {
+  background-color: #f8f9fa;
+  /* Change header background */
+  border-bottom: 1px solid #dee2e6;
+  /* Border for header */
+}
+
+.offcanvas-body {
+  padding: 1rem;
+  /* Adjust padding */
+}

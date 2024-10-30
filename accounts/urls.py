@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
 
 app_name = 'accounts'
@@ -8,4 +8,6 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('admin_board/', views.admin_board_view, name='admin_board'),
     path('password/change/', views.password_change_view, name='password_change'),
+    path('pages/', include('pages.urls')),
+
 ]
