@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, PasswordChangeForm, ProfileForm
 from .utils import log_activity
 from django.core.paginator import Paginator
-from .models import Activity
+from .models import Activity,NewUser
 
 
 def login_view(request):
@@ -74,14 +74,28 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
+    try:
+        # Fetch the NewUser instance related to the logged-in user
+        new_user = NewUser.objects.get(user=request.user)
+    except NewUser.DoesNotExist:
+        new_user = None  # Handle case where no NewUser instance is found
+    
     if request.method == 'POST':
         user = request.user
-        user.first_name = request.POST['first_name']
-        user.last_name = request.POST['last_name']
-        user.email = request.POST['email']
+        user.email = request.POST['email']  # Update email only
         user.save()
         messages.success(request, 'Profile updated successfully.')
-    return render(request, 'accounts/profile.html', {'form': ProfileForm({'first_name': request.user.first_name, 'last_name': request.user.last_name, 'email': request.user.email})})
+
+    # Auto-populate form with user's details, including project from NewUser model
+    form = ProfileForm(initial={
+        'username': request.user.username,  # Auto-populate username
+        'email': request.user.email,        # Auto-populate email
+        'project': new_user.project if new_user else ''  # Auto-populate project, or leave blank if not found
+    })
+    
+    return render(request, 'accounts/profile.html', {'form': form})
+
+
 
 
 @login_required

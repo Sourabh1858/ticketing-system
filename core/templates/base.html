@@ -176,12 +176,16 @@ document.addEventListener('DOMContentLoaded', checkToasts);
 
     <main role="main" class="container-fluid" >
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 ">
                 {% include 'sidebar.html' %}
             </div>
             
             <div class="col-md-9 main-content">
-                <div class="container" style="padding-top: 30px;">
+                <div class="container" 
+                    style="padding-top: 30px;
+                        background-color: #e0e0e0; 
+                        border-radius: 10px;
+                        padding-bottom:20px">
                     <div id="clock"></div>
                     <div id="content">
                         {% block content %}{% endblock %}

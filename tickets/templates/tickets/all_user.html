@@ -1,4 +1,79 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% block title %}All Users{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Edit Users</h1>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Project</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <form method="POST" class="mb-3">
+                {% csrf_token %}
+                <tr>
+                    <!-- Username field -->
+                    <td>
+                        <input type="text" name="username" class="form-control" value="{{ user.user.username }}" required>
+                    </td>
+
+                    <!-- Project multi-select field -->
+                    <td>
+                        <select id="project-{{ user.user.id }}" name="project" class="form-control" multiple required style="width: 100%">
+                            {% for value, label in project_options %}
+                                <option value="{{ value }}" 
+                                    {% if value in user.project %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <!-- Hidden field for user ID -->
+                    <input type="hidden" name="user_id" value="{{ user.user.id }}">
+
+                    <!-- Save button -->
+                    <td>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </td>
+                </tr>
+            </form>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'tickets:index' %}" class="btn btn-secondary mt-3">Back to Tickets</a>
+</div>
+
+<!-- Include Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Initialize Select2 on each project select element
+    $('select[id^="project-"]').select2({
+      placeholder: 'Select project(s)',
+      allowClear: true
+    });
+  });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {% extends 'base.html' %}
 
 {% block title %}Edit User{% endblock %}
 
@@ -108,83 +183,9 @@
     });
   });
 </script>
-{% endblock %}
-
-
-
-
-{% comment %} {% extends 'base.html' %}
-
-{% block title %}Add User{% endblock %}
-
-{% block content %}
-<div class="container mt-5" style="width:100%">
-    <h2>Add User</h2>
-    
-    <form id="editUserForm" method="POST">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="username">Username:</label>
-        <select id="username" name="username" class="form-control">
-            <option value="">Select a user</option>
-            {% for user in users %}
-                <option value="{{ user.username }}">{{ user.username }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" class="form-control" required>
-    </div>
-
-    <div class="form-group">
-        <label for="password">Password (Leave blank to keep current password):</label>
-        <input type="password" id="password" name="password" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <label for="project">Project:</label>
-        <input type="text" id="project" name="project" class="form-control" required>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Update User</button>
-</form>
-
-    <a href="{% url 'tickets:index' %}" class="btn btn-secondary mt-3">Back to Tickets</a>
-</div>
-
-<!-- Include Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<!-- Include jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Include Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<script>
-  $(document).ready(function() {
-    // Initialize Select2 on the project select element
-    $('#project').select2({
-      placeholder: 'Select project(s)',
-      allowClear: true
-    });
-  });
-</script>
-<script>
-    document.getElementById('username').addEventListener('change', function() {
-        const username = this.value;
-        if (username) {
-            fetch(`/get-user-data/${username}/`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('email').value = data.email;
-                    document.getElementById('project').value = data.projects.join(', ');
-                });
-        } else {
-            // Clear fields if no user selected
-            document.getElementById('email').value = '';
-            document.getElementById('project').value = '';
-        }
-    });
-</script>
 {% endblock %} {% endcomment %}
+
+
+
+
+

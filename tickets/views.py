@@ -299,16 +299,15 @@ def index(request):
 def ticket_detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
 
-    # Get the NewUser instance for the logged-in user
-    new_user = NewUser.objects.filter(user=request.user).first()  # Assuming 'user' is the related name
-    print("Project",new_user)
-    # Get the associated project from the NewUser instance
-    user_project = new_user.project if new_user else None
+    # # Get the NewUser instance for the logged-in user
+    # new_user = NewUser.objects.filter(user=request.user).first()  # Assuming 'user' is the related name
+    # print("Project",new_user)
+    # # Get the associated project from the NewUser instance
+    # user_project = new_user.project if new_user else None
     
     return render(request, 'tickets/ticket_detail.html', {
         'ticket': ticket,
         'comments': ticket.comments.all().order_by('-created_at'),
-        'user_project': user_project
     })
 
 @login_required
@@ -454,37 +453,37 @@ def add_user(request):
     return render(request, 'tickets/add_user.html', {'form': form, 'project_options': project_options})
 
 @user_passes_test(lambda u: u.is_superuser)
-def edit_user(request):
-    users = User.objects.all()  # Get all users
-    projects = NewUser.PROJECT_OPTIONS  # Assuming this is a predefined project list
+def all_user(request):
+    users = NewUser.objects.select_related('user').all()  # Get all users and related NewUser data
+
+    # Get the project options for the select field
+    project_options = NewUser.PROJECT_OPTIONS
 
     if request.method == "POST":
+        user_id = request.POST.get('user_id')
         username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        project_names = request.POST.getlist('project')  # Get selected projects
+        selected_projects = request.POST.getlist('project')  # Get selected projects as a list
 
-        # Get the user to edit
-        user = get_object_or_404(User, username=username)
+        # Fetch the user and related NewUser instance
+        user = get_object_or_404(User, id=user_id)
+        new_user = get_object_or_404(NewUser, user=user)
 
-        # Update user's data
-        user.email = email
-        if password:
-            user.password = make_password(password)  # Hash the password
+        # Update the user's username
+        user.username = username
         user.save()
 
-        # Update project info for the user
-        new_user = get_object_or_404(NewUser, user=user)
-        
-        # Store selected projects as a comma-separated string
-        projects_string = ', '.join(filter(None, project_names))
-        new_user.project = projects_string  # Update the project names
+        # Replace the existing projects with the selected projects
+        # Join the selected projects into a comma-separated string
+        new_user.project = ', '.join(filter(None, selected_projects))  
         new_user.save()
 
-        # Send a success message back via JSON
-        return JsonResponse({'success': True, 'message': f'User {username} updated successfully!'})
+        # Success message and redirect back to the same page
+        messages.success(request, f'User {user.username} updated successfully!')
+        return redirect('tickets:all_user')
 
-    return render(request, 'tickets/edit_user.html', {'users': users, 'projects': projects})
+    return render(request, 'tickets/all_user.html', {'users': users, 'project_options': project_options})
+
+
 
 
 # API to get user data based on selected username

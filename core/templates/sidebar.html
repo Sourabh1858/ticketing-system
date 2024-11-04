@@ -66,19 +66,22 @@
 <div class="sidebar" id="sidebar" 
     style="width: 250px; 
     height: 100vh; 
-    background-color: #f8f9fa; 
+    background-color: #b3e5fc; 
     padding: 15px; 
     position: fixed; 
     left: -250px; /* Start hidden off-screen */
     overflow-y: auto; 
     transition: left 0.3s ease; /* Smooth transition */
-    margin-top: -14px;">
+    margin-top: -14px;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);">
     <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem;">Menu</h5>
     {% if user.is_authenticated %}
         <ul class="navbar-nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:index' %}">All tickets</a>
-            </li>
+            {% if user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:index' %}">All tickets</a>
+                </li>
+            {% endif %}
             <li class="nav-item">
                 <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:my_tasks' %}">My Tasks</a>
             </li>
@@ -87,7 +90,7 @@
             </li>
             {% if user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:edit_user' %}">Edit User</a>
+                    <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:all_user' %}">All User</a>
                 </li>
             {% endif %}
             <li class="nav-item">

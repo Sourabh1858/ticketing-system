@@ -23,11 +23,11 @@
             <p><strong>Description:</strong></p>
             <textarea class="form-control" rows="10" readonly>{{ ticket.description }}</textarea>
 
-            {% if user_project %}
+            {% comment %} {% if user_project %}
             <p><strong>Project:</strong> {{ user_project }}</p>
             {% else %}
             <p><strong>Project:</strong> Not assigned</p>
-            {% endif %}
+            {% endif %} {% endcomment %}
 
             <p><strong>Assigned to:</strong> {{ ticket.assignee }}</p>
             <p><strong>Priority:</strong> {{ ticket.priority }}</p>
