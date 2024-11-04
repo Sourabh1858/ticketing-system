@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import NewUser,Project
+from .models import NewUser
 
 class LoginForm(forms.Form):
     fields = ['username', 'password']

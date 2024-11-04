@@ -1,49 +1,80 @@
-{% comment %} <div class="sidebar" id="sidebar" 
-    style="width: 250px; 
-    height: 100vh;
-    background-color: #f8f9fa;; 
-    padding: 15px; position: fixed; 
-    overflow-y: auto;
-    margin-top: -14px;">
-    <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem;">Menu</h5>
-    {% if user.is_authenticated %}
-        <ul class="navbar-nav flex-column" >
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:index' %}">All tickets</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:my_tasks' %}">My Tasks</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:add_user' %}">Add User</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:in_progress' %}">In Progress</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_issues' %}">Open Issues</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_closed_tickets' %}">Closed Tickets</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_hidden_tickets' %}">Hidden Tickets</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:view_changes' %}">Activity Log</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:new_ticket' %}">New Ticket</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:statistics' %}">Stats</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:view_help' %}">Help</a>
-            </li>
-        </ul>
-    {% endif %}
-</div>  {% endcomment %}
+<style>
+    /* CSS for Responsive Sidebar */
+    @media (max-width: 768px) {
+        .sidebar {
+            left: -250px;
+            /* Start hidden off-screen */
+            width: 250px;
+            /* Width of the sidebar */
+        }
+    }
+
+    /* CSS */
+    .sidebar-button {
+        appearance: button;
+        background-color: #3244af;
+        border: solid transparent;
+        border-width: 0 0 4px;
+        box-sizing: border-box;
+        color: #FFFFFF;
+        cursor: pointer;
+        display: inline-block;
+        font-family: din-round, sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: .8px;
+        line-height: 20px;
+        margin: 0;
+        outline: none;
+        overflow: visible;
+        padding: 13px 16px;
+        text-align: center;
+        text-transform: uppercase;
+        touch-action: manipulation;
+        transform: translateZ(0);
+        transition: filter .2s;
+        user-select: none;
+        -webkit-user-select: none;
+        vertical-align: middle;
+        white-space: nowrap;
+        width: 100%;
+    }
+
+    .sidebar-button:after {
+        background-clip: padding-box;
+        background-color: #6477e1;;
+        border: solid transparent;
+        border-width: 0 0 4px;
+        bottom: -4px;
+        content: "";
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: -1;
+    }
+
+    .sidebar-button,
+    .sidebar-button:focus {
+        user-select: auto;
+    }
+
+    .sidebar-button:hover:not(:disabled) {
+        filter: brightness(1.1);
+        -webkit-filter: brightness(1.1);
+    }
+
+    .sidebar-button:disabled {
+        cursor: auto;
+    }
+
+    .sidebar-button:active {
+        border-width: 4px 0 0;
+        background: none;
+    }
+</style>
+
+
 <!-- Toggle Button (Hamburger Icon) -->
 <button id="toggleSidebar" 
     style="font-size: 1.5rem; 
@@ -63,10 +94,9 @@
 </button>
 
 <!-- Sidebar -->
-<div class="sidebar" id="sidebar" 
-    style="width: 250px; 
+<div class="sidebar" id="sidebar" style="width: 250px; 
     height: 100vh; 
-    background-color: #b3e5fc; 
+    background-color: #000000 /* Set background color to link color */
     padding: 15px; 
     position: fixed; 
     left: -250px; /* Start hidden off-screen */
@@ -74,52 +104,101 @@
     transition: left 0.3s ease; /* Smooth transition */
     margin-top: -14px;
     box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);">
-    <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem;">Menu</h5>
+    <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem; color: white;">Menu</h5>
     {% if user.is_authenticated %}
-        <ul class="navbar-nav flex-column">
+    <ul class="navbar-nav flex-column">
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;"
+                onclick="window.location.href='{% url 'tickets:my_tasks' %}'">
+                <span>My Tasks</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
+                onclick="window.location.href='{% url 'tickets:add_user' %}'">
+                <span>Add User</span>
+            </button>
+        </li>
+        {% if user.is_superuser %}
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
+                onclick="window.location.href='{% url 'tickets:all_user' %}'">
+                <span>All Users</span>
+            </button>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
+                onclick="window.location.href='{% url 'tickets:in_progress' %}'">
+                <span>In Progress</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
+                onclick="window.location.href='{% url 'tickets:list_issues' %}'">
+                <span>Open Issues</span>
+            </button>
+        </li>
+
+    <li class="nav-item">
+        <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px">
+            Tickets
+        </button>
+        <ul class="child-elements" style="display:none;">
             {% if user.is_superuser %}
-                <li class="nav-item">
-                    <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:index' %}">All tickets</a>
-                </li>
+            <li style="margin-top:5px;">
+            <a class="nav-link"
+                style="font-size: 1.25rem; display: flex; align-items: center; padding: 10px;  border-radius: 5px; margin-bottom: 5px;background-color:#243599; color: white;"                href="{% url 'tickets:index' %}">
+                <span>All tickets</span>
+            </a>
+            </li>
             {% endif %}
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:my_tasks' %}">My Tasks</a>
+            <li style="margin-top:5px;">
+                <a class="nav-link" href="{% url 'tickets:new_ticket' %}"
+                style="font-size: 1.25rem; display: flex; align-items: center; padding: 10px; background-color:#243599; color: white; border-radius: 5px; margin-bottom: 5px;"                href="{% url 'tickets:index' %}">
+                    <span>New Ticket</span>
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:add_user' %}">Add User</a>
+            <li style="margin-top:5px;">
+                <a class="nav-link" href="{% url 'tickets:list_closed_tickets' %}"
+                    style="font-size: 1.25rem; display: flex; align-items: center; padding: 10px; background-color:#243599; color: white; border-radius: 5px; margin-bottom: 5px;">
+                    <span> Closed Tickets</span>
+                </a>
             </li>
-            {% if user.is_superuser %}
-                <li class="nav-item">
-                    <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:all_user' %}">All User</a>
-                </li>
-            {% endif %}
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:in_progress' %}">In Progress</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_issues' %}">Open Issues</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_closed_tickets' %}">Closed Tickets</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:list_hidden_tickets' %}">Hidden Tickets</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:view_changes' %}">Activity Log</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:new_ticket' %}">New Ticket</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:statistics' %}">Stats</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="font-size: 1.25rem;" href="{% url 'tickets:view_help' %}">Help</a>
+            <li style="margin-top:5px;">
+                <a class="nav-link"
+                    style="font-size: 1.25rem; display: flex; align-items: center; padding: 10px; background-color:#243599; color: white; border-radius: 5px; margin-bottom: 5px;"
+                    href="{% url 'tickets:list_hidden_tickets' %}">
+                    <span>Hidden Tickets</span>
+                </a>
             </li>
         </ul>
+    </li>
+
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
+                onclick="window.location.href='{% url 'tickets:view_changes' %}'">
+                <span>Activity Log</span>
+            </button>
+        </li>
+        
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
+                onclick="window.location.href='{% url 'tickets:statistics' %}'">
+                <span>Stats</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
+                onclick="window.location.href='{% url 'tickets:view_help' %}'">
+                <span>Help</span>
+            </button>
+        </li>
+    </ul>
     {% endif %}
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- JavaScript for Toggle Functionality -->
 <script>
@@ -146,15 +225,28 @@
     window.addEventListener('load', updateToggleButtonVisibility);
 </script>
 
-<style>
-    /* CSS for Responsive Sidebar */
-    @media (max-width: 768px) {
-        .sidebar {
-            left: -250px; /* Start hidden off-screen */
-            width: 250px; /* Width of the sidebar */
-        }
-    }
-</style>
+<!-- script for toggling sidebar sub list -->
+<script>
+    $(document).ready(function () {
+            $(document).off("click", ".toggle-submenu").on("click", ".toggle-submenu", function (e) {
+                e.preventDefault();
+                console.log("toggle-submenu clicked");
+                const display = $(this).next(".child-elements").css("display");
+                if(display === "block"){
+                    $(this).next(".child-elements").css("display","none");
+                }
+                else{
+                    $(this).next(".child-elements").css("display", "block");
+                }
+
+            });
+        });
+
+        
+
+</script>
+
+
 
 
 
