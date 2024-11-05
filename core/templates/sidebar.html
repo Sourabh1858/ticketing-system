@@ -12,7 +12,7 @@
     /* CSS */
     .sidebar-button {
         appearance: button;
-        background-color: #3244af;
+        background-color: transperant;
         border: solid transparent;
         border-width: 0 0 4px;
         box-sizing: border-box;
@@ -42,7 +42,7 @@
 
     .sidebar-button:after {
         background-clip: padding-box;
-        background-color: #6477e1;;
+        background-color: transparent;
         border: solid transparent;
         border-width: 0 0 4px;
         bottom: -4px;
@@ -71,7 +71,18 @@
     .sidebar-button:active {
         border-width: 4px 0 0;
         background: none;
+        margin-left:10px;
     }
+
+    .child-elements {
+    list-style-type: disc;  
+    padding-left: 20px;     
+    }
+
+    .child-elements li::marker {
+        color: white;  /* Change the bullet color to white */
+    }
+
 </style>
 
 
@@ -106,68 +117,191 @@
     box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);">
     <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem; color: white;">Menu</h5>
     {% if user.is_authenticated %}
-    <ul class="navbar-nav flex-column">
+    <ul class="navbar-nav flex-column" style="align-items:flex-start; margin-left:30px">
+
         <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;"
-                onclick="window.location.href='{% url 'tickets:my_tasks' %}'">
-                <span>My Tasks</span>
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
-                onclick="window.location.href='{% url 'tickets:add_user' %}'">
-                <span>Add User</span>
-            </button>
-        </li>
-        {% if user.is_superuser %}
-        <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
-                onclick="window.location.href='{% url 'tickets:all_user' %}'">
-                <span>All Users</span>
-            </button>
-        </li>
-        {% endif %}
-        <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
-                onclick="window.location.href='{% url 'tickets:in_progress' %}'">
-                <span>In Progress</span>
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
-                onclick="window.location.href='{% url 'tickets:list_issues' %}'">
-                <span>Open Issues</span>
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
+                onclick="window.location.href='{% url 'accounts:profile' %}'" data-page="profile">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17px" height="17px"
+                    viewBox="0 0 20 20" version="1.1">
+                    <title>profile_round [#1342]</title>
+                    <desc>Created with Sketch.</desc>
+                    <defs>
+                    </defs>
+                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
+                            <g id="icons" transform="translate(56.000000, 160.000000)">
+                                <!-- Set stroke to white and fill to none for the path -->
+                                <path
+                                    d="M100.562548,2016.99998 L87.4381713,2016.99998 C86.7317804,2016.99998 86.2101535,2016.30298 86.4765813,2015.66198 C87.7127655,2012.69798 90.6169306,2010.99998 93.9998492,2010.99998 C97.3837885,2010.99998 100.287954,2012.69798 101.524138,2015.66198 C101.790566,2016.30298 101.268939,2016.99998 100.562548,2016.99998 M89.9166645,2004.99998 C89.9166645,2002.79398 91.7489936,2000.99998 93.9998492,2000.99998 C96.2517256,2000.99998 98.0830339,2002.79398 98.0830339,2004.99998 C98.0830339,2007.20598 96.2517256,2008.99998 93.9998492,2008.99998 C91.7489936,2008.99998 89.9166645,2007.20598 89.9166645,2004.99998 M103.955674,2016.63598 C103.213556,2013.27698 100.892265,2010.79798 97.837022,2009.67298 C99.4560048,2008.39598 100.400241,2006.33098 100.053171,2004.06998 C99.6509769,2001.44698 97.4235996,1999.34798 94.7348224,1999.04198 C91.0232075,1998.61898 87.8750721,2001.44898 87.8750721,2004.99998 C87.8750721,2006.88998 88.7692896,2008.57398 90.1636971,2009.67298 C87.1074334,2010.79798 84.7871636,2013.27698 84.044024,2016.63598 C83.7745338,2017.85698 84.7789973,2018.99998 86.0539717,2018.99998 L101.945727,2018.99998 C103.221722,2018.99998 104.226185,2017.85698 103.955674,2016.63598"
+                                    id="profile_round-[#1342]"   /> 
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+
+                <span style="margin-left:10px;">My Profile</span>
             </button>
         </li>
 
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;font-size:16px;font-weight:600" data-page="tasks">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" stroke="#ffffff"
+                    stroke-width="2" width="20px" height="20px" viewBox="0 0 36 36" version="1.1" preserveAspectRatio="xMidYMid meet">
+                    <title>note-edit-line</title>
+                    <path d="M28,30H6V8H19.22l2-2H6A2,2,0,0,0,4,8V30a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V15l-2,2Z"
+                        class="clr-i-outline clr-i-outline-path-1" />
+                    <path
+                        d="M33.53,5.84,30.16,2.47a1.61,1.61,0,0,0-2.28,0L14.17,16.26l-1.11,4.81A1.61,1.61,0,0,0,14.63,23,1.69,1.69,0,0,0,15,23l4.85-1.07L33.53,8.12A1.61,1.61,0,0,0,33.53,5.84ZM18.81,20.08l-3.66.81L16,17.26,26.32,6.87l2.82,2.82ZM30.27,8.56,27.45,5.74,29,4.16,31.84,7Z"
+                        class="clr-i-outline clr-i-outline-path-2"  />
+                </svg>
+
+                <span style="margin-left:10px;">Tasks</span>
+            </button>
+            <ul class="child-elements" style="display:none;">
+                <li style="margin-top:5px;">
+                    <a class="nav-link"
+                        style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  border-radius: 5px; margin-bottom: 5px; color: white;"
+                        href="{% url 'tickets:my_tasks' %}">
+                        <span>My Tasks</span>
+                    </a>
+                </li>
+                <li style="margin-top:5px;">
+                    <a class="nav-link" href="{% url 'tickets:new_ticket' %}"
+                        style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  color: white; border-radius: 5px; margin-bottom: 5px;"
+                        href="{% url 'tickets:in_progress' %}">
+                        <span>In Progress</span>
+                    </a>
+                </li>
+                <li style="margin-top:5px;">
+                    <a class="nav-link" href="{% url 'tickets:list_issues' %}"
+                        style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  color: white; border-radius: 5px; margin-bottom: 5px;">
+                        <span>Open Issues</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+
+        <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;" data-page="manage_users">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ffffff" height="18px"
+                    width="18px" version="1.1" id="Layer_1" viewBox="0 0 459.864 459.864" xml:space="preserve">
+                    <g>
+                        <g>
+                            <g>
+                                <!-- Apply white stroke with stroke width of 2 and keep black fill -->
+                                <path
+                                    d="M395.988,193.978c-6.215,8.338-13.329,15.721-21.13,21.941c33.044,21.079,55.005,58.06,55.005,100.077 c0,13.638-20.011,23.042-31.938,27.434c-9.301,3.425-20.237,6.229-32.19,8.347c0.387,5.05,0.586,10.153,0.586,15.3 c0,4.455-0.389,9.647-1.518,15.299c16.064-2.497,30.815-6.128,43.488-10.794c42.626-15.694,51.573-38.891,51.573-55.586 C459.863,265.52,434.565,220.85,395.988,193.978z"
+                                    stroke="#ffffff" stroke-width="20"  />
+                                <path
+                                    d="M311.244,15.147c-18.734,0-36.411,7.436-50.724,21.145c5.632,7.212,10.553,15.004,14.733,23.246 c9.592-10.94,22.195-17.602,35.991-17.602c29.955,0,54.325,31.352,54.325,69.888s-24.37,69.888-54.325,69.888 c-9.01,0-17.507-2.853-24.995-7.868c-2.432,8.863-5.627,17.42-9.53,25.565c10.642,5.952,22.36,9.093,34.525,9.093 c45.83,0,81.115-44.3,81.115-96.678C392.359,59.441,357.069,15.147,311.244,15.147z"
+                                    stroke="#ffffff" stroke-width="20"  />
+                                <path
+                                    d="M259.999,226.28c-6.487,8.205-13.385,15.089-20.57,20.892c40.84,24.367,68.257,68.991,68.257,119.904 c0,17.196-24.104,28.639-38.472,33.929c-26.025,9.583-62.857,15.078-101.053,15.078c-38.196,0-75.029-5.495-101.054-15.078 c-14.368-5.29-38.472-16.732-38.472-33.929c0-50.914,27.417-95.538,68.257-119.904c-7.184-5.802-14.083-12.687-20.57-20.892 C30.403,256.335,0,308.218,0,367.077c0,18.127,9.926,43.389,57.213,60.8c29.496,10.861,68.898,16.841,110.947,16.841 c42.049,0,81.451-5.98,110.947-16.841c47.287-17.411,57.213-42.673,57.213-60.8C336.32,308.218,305.918,256.335,259.999,226.28z"
+                                    stroke="#ffffff" stroke-width="20"  />
+                                <path
+                                    d="M168.16,242.764c53.003,0,93.806-51.234,93.806-111.804c0-60.571-40.808-111.804-93.806-111.804 c-52.995,0-93.806,51.223-93.806,111.804C74.354,191.542,115.169,242.764,168.16,242.764z M168.16,47.79 c35.936,0,65.171,37.31,65.171,83.169s-29.236,83.169-65.171,83.169s-65.171-37.31-65.171-83.169S132.225,47.79,168.16,47.79z"
+                                    stroke="#ffffff" stroke-width="20"  />
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+                <span style="margin-left:10px;">Manage Users</span>
+            </button>
+            <ul class="child-elements" style="display:none;">
+                {% if user.is_superuser %}
+                <li style="margin-top:5px;">
+                    <a class="nav-link"
+                        style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  border-radius: 5px; margin-bottom: 5px; color: white;"
+                        href="{% url 'tickets:all_user' %}">
+                        <span>All Users</span>
+                    </a>
+                </li>
+                {% endif %}
+                <li style="margin-top:5px;">
+                    <a class="nav-link" href="{% url 'tickets:new_ticket' %}"
+                        style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  color: white; border-radius: 5px; margin-bottom: 5px;"
+                        href="{% url 'tickets:add_user' %}">
+                        <span>Add User</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
     <li class="nav-item">
-        <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px">
-            Tickets
+        <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;" data-page="tickets">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" height="20px"
+                width="20px" version="1.1" id="Layer_1" viewBox="0 0 512 512" xml:space="preserve">
+                <g>
+                    <g>
+                        <path
+                            d="M501.939,140.449c5.579-0.076,10.061-4.619,10.061-10.198v-27.174c0-5.633-4.566-10.199-10.199-10.199H10.199 C4.566,92.878,0,97.444,0,103.077v27.174c0,2.729,1.094,5.344,3.037,7.262c1.943,1.916,4.579,2.951,7.303,2.936l0.366-0.01 c11.73,0.041,21.261,9.596,21.261,21.336c0,11.736-9.525,21.289-21.25,21.336l-0.377-0.01c-2.725-0.016-5.359,1.02-7.303,2.936 C1.093,187.953,0,190.569,0,193.298v31.177c0,2.729,1.094,5.344,3.037,7.262c1.943,1.916,4.579,2.961,7.303,2.936l0.366-0.01 c11.73,0.041,21.261,9.596,21.261,21.336c0,11.735-9.525,21.289-21.251,21.336l-0.376-0.01c-2.725-0.005-5.359,1.021-7.303,2.936 C1.094,282.179,0,284.794,0,287.524v31.177c0,2.729,1.094,5.345,3.037,7.262c1.943,1.915,4.579,2.942,7.303,2.936l0.366-0.01 c11.73,0.041,21.261,9.596,21.261,21.336c0,11.737-9.526,21.292-21.253,21.336l-0.374-0.01c-2.725-0.024-5.359,1.02-7.303,2.936 C1.094,376.405,0,379.02,0,381.749v27.174c0,5.633,4.566,10.199,10.199,10.199h491.602c5.633,0,10.199-4.566,10.199-10.199 v-27.174c0-5.579-4.484-10.123-10.061-10.198c-11.602-0.156-21.041-9.723-21.041-21.327c0-11.603,9.439-21.169,21.041-21.326 c5.579-0.075,10.061-4.619,10.061-10.198v-31.177c0-5.579-4.484-10.123-10.061-10.198c-11.602-0.156-21.041-9.723-21.041-21.326 c0-11.603,9.439-21.169,21.041-21.326c5.579-0.075,10.061-4.619,10.061-10.198v-31.177c0-5.579-4.484-10.123-10.061-10.198 c-11.602-0.156-21.041-9.723-21.041-21.326C480.897,150.172,490.336,140.605,501.939,140.449z M491.602,202.118v13.539 c-17.85,4.742-31.104,21.113-31.104,40.343c0,19.23,13.253,35.6,31.104,40.343v13.539c-17.85,4.743-31.104,21.113-31.104,40.343 c0,19.23,13.253,35.6,31.104,40.343v8.156h-132.59V380.43c0-5.633-4.566-10.199-10.199-10.199 c-5.633,0-10.199,4.566-10.199,10.199v18.294H20.398v-7.919c18.316-4.409,31.967-20.931,31.967-40.581 s-13.652-36.171-31.967-40.581V296.58c18.316-4.409,31.967-20.93,31.967-40.581c0-19.651-13.652-36.17-31.967-40.58v-13.065 c18.316-4.409,31.967-20.93,31.967-40.581c0-19.651-13.652-36.17-31.967-40.58v-7.919h318.215v18.294 c0,5.633,4.566,10.199,10.199,10.199c5.633,0,10.199-4.566,10.199-10.199v-18.294h132.59v8.156 c-17.85,4.743-31.104,21.113-31.104,40.343S473.752,197.375,491.602,202.118z"
+                            stroke="#ffffff" stroke-width="25" fill="#ffffff" />
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path
+                            d="M348.813,171.143c-5.633,0-10.199,4.566-10.199,10.199v49.772c0,5.633,4.566,10.199,10.199,10.199 c5.633,0,10.199-4.566,10.199-10.199v-49.772C359.012,175.709,354.446,171.143,348.813,171.143z"
+                            stroke="#ffffff" stroke-width="25" fill="#ffffff" />
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path
+                            d="M348.813,270.687c-5.633,0-10.199,4.566-10.199,10.199v49.772c0,5.633,4.566,10.199,10.199,10.199 c5.633,0,10.199-4.566,10.199-10.199v-49.772C359.012,275.253,354.446,270.687,348.813,270.687z"
+                            stroke="#ffffff" stroke-width="25" fill="#ffffff" />
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path
+                            d="M278.438,158.088H108.112c-5.633,0-10.199,4.566-10.199,10.199s4.566,10.199,10.199,10.199h170.327 c5.633,0,10.199-4.566,10.199-10.199S284.071,158.088,278.438,158.088z"
+                            stroke="#ffffff" stroke-width="25" fill="#ffffff" />
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path
+                            d="M196.403,209.186h-88.291c-5.633,0-10.199,4.566-10.199,10.199c0,5.633,4.566,10.199,10.199,10.199h88.291 c5.633,0,10.199-4.566,10.199-10.199C206.602,213.752,202.036,209.186,196.403,209.186z"
+                            stroke="#ffffff" stroke-width="25" fill="#ffffff" />
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path
+                            d="M254.106,209.186h-15.643c-5.633,0-10.199,4.566-10.199,10.199c0,5.633,4.566,10.199,10.199,10.199h15.643 c5.633,0,10.199-4.566,10.199-10.199C264.305,213.752,259.739,209.186,254.106,209.186z"
+                            stroke="#ffffff" stroke-width="25" fill="#ffffff" />
+                    </g>
+                </g>
+            </svg>
+            <span style="margin-left:10px;">Tickets</span>
         </button>
         <ul class="child-elements" style="display:none;">
             {% if user.is_superuser %}
             <li style="margin-top:5px;">
             <a class="nav-link"
-                style="font-size: 1.25rem; display: flex; align-items: center; padding: 10px;  border-radius: 5px; margin-bottom: 5px;background-color:#243599; color: white;"                href="{% url 'tickets:index' %}">
+                style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  border-radius: 5px; margin-bottom: 5px; color: white;"                href="{% url 'tickets:index' %}">
                 <span>All tickets</span>
             </a>
             </li>
             {% endif %}
             <li style="margin-top:5px;">
                 <a class="nav-link" href="{% url 'tickets:new_ticket' %}"
-                style="font-size: 1.25rem; display: flex; align-items: center; padding: 10px; background-color:#243599; color: white; border-radius: 5px; margin-bottom: 5px;"                href="{% url 'tickets:index' %}">
+                style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  color: white; border-radius: 5px; margin-bottom: 5px;"                href="{% url 'tickets:index' %}">
                     <span>New Ticket</span>
                 </a>
             </li>
             <li style="margin-top:5px;">
                 <a class="nav-link" href="{% url 'tickets:list_closed_tickets' %}"
-                    style="font-size: 1.25rem; display: flex; align-items: center; padding: 10px; background-color:#243599; color: white; border-radius: 5px; margin-bottom: 5px;">
+                    style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  color: white; border-radius: 5px; margin-bottom: 5px;">
                     <span> Closed Tickets</span>
                 </a>
             </li>
             <li style="margin-top:5px;">
                 <a class="nav-link"
-                    style="font-size: 1.25rem; display: flex; align-items: center; padding: 10px; background-color:#243599; color: white; border-radius: 5px; margin-bottom: 5px;"
+                    style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  color: white; border-radius: 5px; margin-bottom: 5px;"
                     href="{% url 'tickets:list_hidden_tickets' %}">
                     <span>Hidden Tickets</span>
                 </a>
@@ -176,24 +310,87 @@
     </li>
 
         <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
-                onclick="window.location.href='{% url 'tickets:view_changes' %}'">
-                <span>Activity Log</span>
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
+                onclick="window.location.href='{% url 'tickets:view_changes' %}'" data-page="logs">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" id="a">
+                    <defs>
+                        <style>
+                            .b {
+                                fill: none;
+                                stroke: #ffffff;
+                                /* White outline */
+                                stroke-linecap: round;
+                                stroke-linejoin: round;
+                                stroke-width: 4;
+                                /* You can adjust the stroke width here */
+                            }
+                        </style>
+                    </defs>
+                    <path class="b"
+                        d="m40.5,5.5H7.5c-1.1046,0-2,.8954-2,2v33c0,1.1046.8954,2,2,2h33c1.1046,0,2-.8954,2-2V7.5c0-1.1046-.8954-2-2-2Zm-11.5,30H11m26,6.9544v-4.7409h-2.2342c-1.1168,0-2.0158-.8991-2.0158-2.0158v-.5376c0-1.1168.8991-2.0158,2.0158-2.0158h2.2342v-6.6807h-2.4842c-1.1168,0-2.0158-.8991-2.0158-2.0158v-.5376c0-1.1168.8991-2.0158,2.0158-2.0158h2.4842v-6.9307h-2.4842c-1.1168,0-2.0158-.8991-2.0158-2.0158v-.5376c0-1.1168.8991-2.0158,2.0158-2.0158h2.4842v-4.8532m-8,18.9586H11m13-11h-13" />
+                </svg>
+
+                <span style="margin-left:10px;">Activity Log</span>
             </button>
         </li>
         
         <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
-                onclick="window.location.href='{% url 'tickets:statistics' %}'">
-                <span>Stats</span>
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
+                onclick="window.location.href='{% url 'tickets:statistics' %}'" data-page="stats">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 24 24">
+            <defs>
+                <style>
+                    .cls-1 {
+                        fill: #ffffff;
+                        /* Original fill color */
+                        fill-rule: evenodd;
+                        stroke: #ffffff;
+                        /* White outline */
+                        stroke-width: 0.1;
+                        /* Adjust the stroke width here */
+                    }
+                </style>
+            </defs>
+            <path id="stats1" class="cls-1"
+                d="M1091,264h-22a1,1,0,0,1-1-1V241a1,1,0,0,1,2,0v21h21A1,1,0,0,1,1091,264Zm-5-4a1,1,0,0,1-1-1V248a1,1,0,0,1,2,0v11A1,1,0,0,1,1086,260Zm-4,0h0a1,1,0,0,1-1-1v-7a1,1,0,0,1,1-1h0a1,1,0,0,1,1,1v7A1,1,0,0,1,1082,260Zm-4,0a1,1,0,0,1-1-1V243a1,1,0,0,1,2,0v16A1,1,0,0,1,1078,260Zm-4,0a1,1,0,0,1-1-1V249a1,1,0,0,1,2,0v10A1,1,0,0,1,1074,260Z"
+                transform="translate(-1068 -240)" />
+        </svg>
+
+
+                <span style="margin-left:10px;">Stats</span>
             </button>
         </li>
+
         <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px"
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
+                onclick="window.location.href='{% url 'accounts:logout' %}'" data-page="logout">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" width="16px" height="16px" viewBox="0 0 32 32" version="1.1">
+                    <defs>
+                        <style>
+                            .cls-1 {
+                                fill: #000000;
+                                /* Black fill */
+                                stroke: #ffffff;
+                                /* White outline */
+                                stroke-width: 2;
+                                /* Adjust stroke width */
+                            }
+                        </style>
+                    </defs>
+                    <path class="cls-1"
+                        d="M3.651 16.989h17.326c0.553 0 1-0.448 1-1s-0.447-1-1-1h-17.264l3.617-3.617c0.391-0.39 0.391-1.024 0-1.414s-1.024-0.39-1.414 0l-5.907 6.062 5.907 6.063c0.196 0.195 0.451 0.293 0.707 0.293s0.511-0.098 0.707-0.293c0.391-0.39 0.391-1.023 0-1.414zM29.989 0h-17c-1.105 0-2 0.895-2 2v9h2.013v-7.78c0-0.668 0.542-1.21 1.21-1.21h14.523c0.669 0 1.21 0.542 1.21 1.21l0.032 25.572c0 0.668-0.541 1.21-1.21 1.21h-14.553c-0.668 0-1.21-0.542-1.21-1.21v-7.824l-2.013 0.003v9.030c0 1.105 0.895 2 2 2h16.999c1.105 0 2.001-0.895 2.001-2v-28c-0-1.105-0.896-2-2-2z" />
+                </svg>
+
+                <span style="margin-left:10px;">Logout</span>
+            </button>
+        </li>
+
+        <!-- <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
                 onclick="window.location.href='{% url 'tickets:view_help' %}'">
                 <span>Help</span>
             </button>
-        </li>
+        </li> -->
     </ul>
     {% endif %}
 </div>
@@ -231,6 +428,9 @@
             $(document).off("click", ".toggle-submenu").on("click", ".toggle-submenu", function (e) {
                 e.preventDefault();
                 console.log("toggle-submenu clicked");
+                const button_name = $(this).data('page')
+                console.log("button name:", button_name)
+                localStorage.setItem("active_content",button_name)
                 const display = $(this).next(".child-elements").css("display");
                 if(display === "block"){
                     $(this).next(".child-elements").css("display","none");
