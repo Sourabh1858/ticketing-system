@@ -113,36 +113,11 @@
     left: -250px; /* Start hidden off-screen */
     overflow-y: auto; 
     transition: left 0.3s ease; /* Smooth transition */
-    margin-top: -14px;
+    margin-top: 41px;
     box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);">
-    <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem; color: white;">Menu</h5>
+    <!-- <h5 class="sidebar-title" style="font-size: 1.25rem; margin-bottom: 1rem; color: white;">Menu</h5> -->
     {% if user.is_authenticated %}
     <ul class="navbar-nav flex-column" style="align-items:flex-start; margin-left:30px">
-
-        <li class="nav-item">
-            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
-                onclick="window.location.href='{% url 'accounts:profile' %}'" data-page="profile">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17px" height="17px"
-                    viewBox="0 0 20 20" version="1.1">
-                    <title>profile_round [#1342]</title>
-                    <desc>Created with Sketch.</desc>
-                    <defs>
-                    </defs>
-                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
-                            <g id="icons" transform="translate(56.000000, 160.000000)">
-                                <!-- Set stroke to white and fill to none for the path -->
-                                <path
-                                    d="M100.562548,2016.99998 L87.4381713,2016.99998 C86.7317804,2016.99998 86.2101535,2016.30298 86.4765813,2015.66198 C87.7127655,2012.69798 90.6169306,2010.99998 93.9998492,2010.99998 C97.3837885,2010.99998 100.287954,2012.69798 101.524138,2015.66198 C101.790566,2016.30298 101.268939,2016.99998 100.562548,2016.99998 M89.9166645,2004.99998 C89.9166645,2002.79398 91.7489936,2000.99998 93.9998492,2000.99998 C96.2517256,2000.99998 98.0830339,2002.79398 98.0830339,2004.99998 C98.0830339,2007.20598 96.2517256,2008.99998 93.9998492,2008.99998 C91.7489936,2008.99998 89.9166645,2007.20598 89.9166645,2004.99998 M103.955674,2016.63598 C103.213556,2013.27698 100.892265,2010.79798 97.837022,2009.67298 C99.4560048,2008.39598 100.400241,2006.33098 100.053171,2004.06998 C99.6509769,2001.44698 97.4235996,1999.34798 94.7348224,1999.04198 C91.0232075,1998.61898 87.8750721,2001.44898 87.8750721,2004.99998 C87.8750721,2006.88998 88.7692896,2008.57398 90.1636971,2009.67298 C87.1074334,2010.79798 84.7871636,2013.27698 84.044024,2016.63598 C83.7745338,2017.85698 84.7789973,2018.99998 86.0539717,2018.99998 L101.945727,2018.99998 C103.221722,2018.99998 104.226185,2017.85698 103.955674,2016.63598"
-                                    id="profile_round-[#1342]"   /> 
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-
-                <span style="margin-left:10px;">My Profile</span>
-            </button>
-        </li>
 
         <li class="nav-item">
             <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;font-size:16px;font-weight:600" data-page="tasks">
@@ -167,7 +142,7 @@
                     </a>
                 </li>
                 <li style="margin-top:5px;">
-                    <a class="nav-link" href="{% url 'tickets:new_ticket' %}"
+                    <a class="nav-link" 
                         style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  color: white; border-radius: 5px; margin-bottom: 5px;"
                         href="{% url 'tickets:in_progress' %}">
                         <span>In Progress</span>
@@ -220,7 +195,7 @@
                 </li>
                 {% endif %}
                 <li style="margin-top:5px;">
-                    <a class="nav-link" href="{% url 'tickets:new_ticket' %}"
+                    <a class="nav-link" 
                         style="font-size: 1rem; display: flex; align-items: center; padding: 10px;  color: white; border-radius: 5px; margin-bottom: 5px;"
                         href="{% url 'tickets:add_user' %}">
                         <span>Add User</span>
@@ -355,15 +330,38 @@
                 d="M1091,264h-22a1,1,0,0,1-1-1V241a1,1,0,0,1,2,0v21h21A1,1,0,0,1,1091,264Zm-5-4a1,1,0,0,1-1-1V248a1,1,0,0,1,2,0v11A1,1,0,0,1,1086,260Zm-4,0h0a1,1,0,0,1-1-1v-7a1,1,0,0,1,1-1h0a1,1,0,0,1,1,1v7A1,1,0,0,1,1082,260Zm-4,0a1,1,0,0,1-1-1V243a1,1,0,0,1,2,0v16A1,1,0,0,1,1078,260Zm-4,0a1,1,0,0,1-1-1V249a1,1,0,0,1,2,0v10A1,1,0,0,1,1074,260Z"
                 transform="translate(-1068 -240)" />
         </svg>
-
-
                 <span style="margin-left:10px;">Stats</span>
             </button>
         </li>
 
         <li class="nav-item">
             <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
-                onclick="window.location.href='{% url 'accounts:logout' %}'" data-page="logout">
+                onclick="window.location.href='{% url 'accounts:profile' %}'" data-page="profile">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17px" height="17px"
+                    viewBox="0 0 20 20" version="1.1">
+                    <title>profile_round [#1342]</title>
+                    <desc>Created with Sketch.</desc>
+                    <defs>
+                    </defs>
+                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
+                            <g id="icons" transform="translate(56.000000, 160.000000)">
+                                <!-- Set stroke to white and fill to none for the path -->
+                                <path
+                                    d="M100.562548,2016.99998 L87.4381713,2016.99998 C86.7317804,2016.99998 86.2101535,2016.30298 86.4765813,2015.66198 C87.7127655,2012.69798 90.6169306,2010.99998 93.9998492,2010.99998 C97.3837885,2010.99998 100.287954,2012.69798 101.524138,2015.66198 C101.790566,2016.30298 101.268939,2016.99998 100.562548,2016.99998 M89.9166645,2004.99998 C89.9166645,2002.79398 91.7489936,2000.99998 93.9998492,2000.99998 C96.2517256,2000.99998 98.0830339,2002.79398 98.0830339,2004.99998 C98.0830339,2007.20598 96.2517256,2008.99998 93.9998492,2008.99998 C91.7489936,2008.99998 89.9166645,2007.20598 89.9166645,2004.99998 M103.955674,2016.63598 C103.213556,2013.27698 100.892265,2010.79798 97.837022,2009.67298 C99.4560048,2008.39598 100.400241,2006.33098 100.053171,2004.06998 C99.6509769,2001.44698 97.4235996,1999.34798 94.7348224,1999.04198 C91.0232075,1998.61898 87.8750721,2001.44898 87.8750721,2004.99998 C87.8750721,2006.88998 88.7692896,2008.57398 90.1636971,2009.67298 C87.1074334,2010.79798 84.7871636,2013.27698 84.044024,2016.63598 C83.7745338,2017.85698 84.7789973,2018.99998 86.0539717,2018.99998 L101.945727,2018.99998 C103.221722,2018.99998 104.226185,2017.85698 103.955674,2016.63598"
+                                    id="profile_round-[#1342]" />
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+        
+                <span style="margin-left:10px;">My Profile</span>
+            </button>
+        </li>
+
+        <!-- <li class="nav-item">
+            <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
+                onclick="window.location.href='{% url 'accounts:logout' %}'" >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" width="16px" height="16px" viewBox="0 0 32 32" version="1.1">
                     <defs>
                         <style>
@@ -383,7 +381,7 @@
 
                 <span style="margin-left:10px;">Logout</span>
             </button>
-        </li>
+        </li> -->
 
         <!-- <li class="nav-item">
             <button class="nav-link toggle-submenu sidebar-button " style="color:white;margin-top:5px;margin-left: -40px;"
@@ -438,10 +436,68 @@
                 else{
                     $(this).next(".child-elements").css("display", "block");
                 }
-
             });
         });
 
+        $(document).ready(function () {
+            updateActiveButtonStyle();
+        });
+
+        function updateActiveButtonStyle(){
+            console.log("inside updateActiveButtonStyle")
+            const active_content = localStorage.getItem("active_content");
+
+            var activeButton = $('button.toggle-submenu[data-page="'+active_content+'"]')
+
+            if (activeButton.length){
+                activeButton.css({
+                    'background-color':'white',
+                    'color':'#8c8aec',
+                    'width':'249px',
+                    'margin-left':'-44px', 
+                })
+            }
+
+            const svg = activeButton.find('svg')
+            const path = svg.find('path')
+
+            path.css({
+                'fill':'#8c8aec',
+                'stroke': '#8c8aec',
+                });
+
+            switch (active_content) {
+                case 'profile':
+                    activeButton.css('margin-left', '-44px');
+                    svg.css('margin-left', '-70px');
+                    break;
+                case 'tasks':
+                    activeButton.css('margin-left', '-44px');
+                    svg.css('margin-left', '-117px');
+                    break;
+                case 'manage_users':
+                    activeButton.css('margin-left', '-44px');
+                    svg.css('margin-left', '-43px');
+                    break;
+                case 'tickets':
+                    activeButton.css('margin-left', '-44px');
+                    svg.css('margin-left', '-105px');
+                    break;
+                case 'logs':
+                    activeButton.css('margin-left', '-44px');
+                    svg.css('margin-left', '-62px');
+                    break;
+                case 'stats':
+                    activeButton.css('margin-left', '-44px');
+                    svg.css('margin-left', '-121px');
+                    break;
+                // Add more cases for other buttons as needed
+                default:
+                    activeButton.css('margin-left', '-44px'); // Default margin
+            }
+
+
+        }
         
 
 </script>

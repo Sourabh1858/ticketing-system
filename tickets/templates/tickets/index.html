@@ -3,8 +3,18 @@
 {% block title %}Tickets{% endblock %}
 {% block content %}
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    jQuery(document).ready(function() {
+    console.log("ticket index loaded");
+    });
+
+    localStorage.setItem('active_content', 'tasks');
+</script>
+
+
 {% include "tickets/header.html" %}
-<div class="container mt-4"style="border:1px">
+<div class="container mt-4"style="border:1px;">
     <h1>{{page_title}} ({{ tickets_count }})</h1>
     <form class="d-flex" method="get" action="{% url 'tickets:search_tickets' %}">
         <input
@@ -97,3 +107,6 @@
     </nav>
 </div>
 {% endblock %}
+
+
+

@@ -1,190 +1,40 @@
-{% comment %} <nav class="navbar navbar-expand-lg bg-body-tertiary" >
-  <div class="container-fluid" >
-    <a class="navbar-brand" href="{% url 'pages:landing_page' %}">TTS</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      {% if user.is_authenticated %}
-      
-      {% if user.is_superuser %}
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a href="{% url 'accounts:admin_board' %}" class="nav-link">Activity log</a>
-        </li>
-      </ul>
-      {% endif %}
-      <form class="d-flex" method="get" action="{% url 'tickets:search_tickets' %}">
-        <input
-          class="form-control me-2"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-          name="q"
-        />
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
 
-      {% endif %} {% endcomment %}
-
-      {% comment %} <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Tickets
-                </button>
-                <ul class="dropdown-menu">
-		<li><a class="dropdown-item" href="{% url 'tickets:index' %}">All tickets</a></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:my_tasks' %}">My tasks</a></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:in_progress' %}">In Progress</a></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:list_issues' %}">Open issues</a> <i class="ticket_count notification-tag">0</i></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:list_closed_tickets' %}">Closed Tickets</a></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:list_hidden_tickets' %}">Hidden Tickets</a></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:view_changes' %}">Activity log</a></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:new_ticket' %}">New Ticket</a></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:statistics' %}">Stats</a></li>
-                <li><a class="dropdown-item" href="{% url 'tickets:view_help' %}">Help</a></li>
-                </ul>
-        </li> 
-        
-      </ul>
-      <form class="d-flex" method="get" action="{% url 'tickets:search_tickets' %}">
-        <input
-          class="form-control me-2"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-          name="q"
-        />
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-      {% endif %}
-      <ul class="navbar-nav d-flex">
-        <li class="nav-item">
-          {% if user.is_authenticated %}
-            <a href="{% url 'accounts:profile' %}" class="nav-link d-inline">({{ user.username }})</a>
-            <a href="{% url 'accounts:logout' %}" class="nav-link d-inline">Logout</a>
-          {% else %}
-            <a href="{% url 'accounts:login' %}" class="nav-link">Login</a>
-          {% endif %}
-        </li>
-      </ul>
-    </div>
-    
-  </div>
-</nav> {% endcomment %}
-{% comment %} 28/24 {% endcomment %}
-{% comment %} <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <!-- Menu Button -->
-        <button class="btn btn-secondary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Toggle Sidebar">
-            <i class="bi bi-list"></i> <!-- Using Bootstrap Icons for a list icon -->
-        </button>
-        <a class="navbar-brand" href="{% url 'pages:landing_page' %}">TTS</a>
-        <form class="d-flex" method="get" action="{% url 'tickets:search_tickets' %}">
-        <input
-          class="form-control me-2"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-          name="q"
-        />
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-      <ul class="navbar-nav d-flex">
-        <li class="nav-item">
-          {% if user.is_authenticated %}
-            <a href="{% url 'accounts:profile' %}" class="nav-link d-inline">({{ user.username }})</a>
-            <a href="{% url 'accounts:logout' %}" class="nav-link d-inline">Logout</a>
-          {% else %}
-            <a href="{% url 'accounts:login' %}" class="nav-link">Login</a>
-          {% endif %}
-        </li>
-      </ul>
-        
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</nav>
-
-<!-- Off-canvas Sidebar -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasSidebarLabel">Menu</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        {% if user.is_authenticated %}
-            <ul class="navbar-nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:index' %}">All tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:my_tasks' %}">My Tasks</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:add_user' %}">Add User</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:in_progress' %}">In Progress</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:list_issues' %}">Open Issues</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:list_closed_tickets' %}">Closed Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:list_hidden_tickets' %}">Hidden Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:view_changes' %}">Activity Log</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:new_ticket' %}">New Ticket</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:statistics' %}">Stats</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:view_help' %}">Help</a>
-                </li>
-            </ul>
-        {% endif %}
-    </div>
-</div> {% endcomment %}
 {% include 'sidebar.html' %}
 
 <!-- Main content area -->
+{% if user.is_authenticated %}
 <div class="main-content" style="margin-top: 70px;">
     <nav class="navbar navbar-expand-lg fixed-top" style="background-color:#dfe7f5; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'pages:landing_page' %}">TTS</a>
             <form class="d-flex" method="get" action="{% url 'tickets:search_tickets' %}">
-                <input
+                <!-- <input
                     class="form-control me-2"
                     type="search"
                     placeholder="Search"
                     aria-label="Search"
                     name="q"
                     style="background-color: #f8f9fa;"
-                />
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                /> -->
+                <!-- <button class="btn btn-outline-success" type="submit">Search</button> -->
             </form>
             <ul class="navbar-nav d-flex">
                 <li class="nav-item">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'accounts:profile' %}" class="nav-link d-inline">({{ user.username }})</a>
-                        <a href="{% url 'accounts:logout' %}" class="nav-link d-inline">Logout</a>
+                        <button onclick="updateActiveContent()" class="nav-link d-inline" style="color:rgb(203, 5, 5);font-size:16px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16px" width="16px"
+                            version="1.1" id="Layer_1" viewBox="0 0 512 512" xml:space="preserve">
+                            <polygon style="fill:#ff0000;"
+                                points="20.677,256 188.13,383.348 175.002,294.072 371.856,294.072 371.856,215.303   175.002,215.303 188.13,128.652 " />
+                            <path style="fill:#ff0000;"
+                                d="M121.108,446.359H438.81V65.641H121.108V13.128h344.027c14.501,0,26.188,11.755,26.188,26.256  v433.231c0,14.501-11.687,26.256-26.188,26.256H121.108V446.359z" />
+                            <path
+                                d="M188.131,396.476c2.299,0,4.607-0.603,6.673-1.824c4.595-2.712,7.091-7.936,6.315-13.215L190.201,307.2h182.311  c7.249,0,12.472-5.879,12.472-13.128v-78.769c0-7.249-5.222-13.128-12.472-13.128H190.268l10.841-71.555  c0.801-5.285-1.683-10.53-6.281-13.258c-4.597-2.725-10.39-2.395-14.646,0.842L12.729,245.55c-3.264,2.484-5.18,6.349-5.18,10.45  c0,4.101,1.917,7.966,5.18,10.45l167.453,127.348C182.519,395.574,185.319,396.476,188.131,396.476z M162.013,295.982l8.447,57.433  L42.365,256l127.933-97.293l-8.276,54.629c-0.574,3.782,0.53,7.626,3.026,10.526c2.493,2.901,6.128,4.569,9.954,4.569h183.727  v52.513H175.002c-3.815,0-7.441,1.661-9.935,4.548C162.572,288.378,161.457,292.208,162.013,295.982z" />
+                            <path
+                                d="M465.135,0H121.764c-7.249,0-13.785,5.879-13.785,13.128v52.513c0,7.249,6.535,13.128,13.785,13.128h303.918v354.462  H121.764c-7.249,0-13.785,5.879-13.785,13.128v52.513c0,7.249,6.535,13.128,13.785,13.128h343.371  c22.041,0,39.316-17.668,39.316-39.385V39.385C504.451,17.668,487.176,0,465.135,0z M478.195,472.615  c0,7.117-5.625,13.128-13.06,13.128H134.236v-26.256h305.231c7.249,0,12.472-5.879,12.472-13.128V65.641  c0-7.249-5.222-13.128-12.472-13.128H134.236V26.256h330.899c7.435,0,13.06,6.011,13.06,13.128V472.615z" />
+                        </svg>
+
+                            Logout</button>
                     {% else %}
                         <a href="{% url 'accounts:login' %}" class="nav-link">Login</a>
                     {% endif %}
@@ -198,54 +48,16 @@
         {% block content %}{% endblock %}
     </div>
 </div>
+{% endif %}
+
+<script>
+    function updateActiveContent(){
+        localStorage.clear();
+        window.location.href= "{% url 'accounts:logout' %}"
+    }
+</script>
 
 
 
-{% comment %} <!-- Always Open Off-canvas Sidebar -->
-<div class="offcanvas offcanvas-start show" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel" style="visibility: visible;">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasSidebarLabel">Menu</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        {% if user.is_authenticated %}
-            <ul class="navbar-nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:index' %}">All tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:my_tasks' %}">My Tasks</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:add_user' %}">Add User</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:in_progress' %}">In Progress</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:list_issues' %}">Open Issues</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:list_closed_tickets' %}">Closed Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:list_hidden_tickets' %}">Hidden Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:view_changes' %}">Activity Log</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:new_ticket' %}">New Ticket</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:statistics' %}">Stats</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'tickets:view_help' %}">Help</a>
-                </li>
-            </ul>
-        {% endif %}
-    </div>
-</div> {% endcomment %}
 
 
