@@ -1,7 +1,15 @@
 {% extends "base.html" %}
+
 {% block title %}All Users{% endblock %}
 
 {% block content %}
+<!-- Loader Section -->
+<div id="loader" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style="z-index: 1050;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div class="container mt-4">
     <h1>All Users</h1>
 
@@ -15,7 +23,7 @@
         </thead>
         <tbody>
             {% for user in users %}
-            <form method="POST" class="mb-3">
+            <form method="POST" class="mb-3" onsubmit="showLoader(event)">
                 {% csrf_token %}
                 <tr>
                     <!-- Username field -->
@@ -64,14 +72,24 @@
       allowClear: true
     });
   });
+
+  // Functions to show and hide the loader
+  function showLoader(event) {
+      event.preventDefault(); // Prevent the form from submitting immediately
+      $('#loader').removeClass('d-none'); // Show the loader
+
+      // Simulate form submission with a timeout (remove this if actual AJAX is used)
+      setTimeout(function() {
+          event.target.submit(); // Submit the form after showing the loader
+      }, 3000); // Adjust this timeout duration as needed
+  }
+
+  function hideLoader() {
+      $('#loader').addClass('d-none'); // Hide the loader
+  }
 </script>
+
 {% endblock %}
-
-
-
-
-
-
 
 {% comment %} {% extends 'base.html' %}
 

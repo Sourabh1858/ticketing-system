@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Loader Section -->
+<div id="loader" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style="z-index: 1050;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div class="container mt-4">
     <!-- Toast notifications for messages -->
     <div aria-live="polite" aria-atomic="true" class="bg-body-secondary position-relative bd-example-toasts rounded-3">
@@ -24,7 +31,7 @@
 
     <h1 class="mb-4">New Ticket</h1>
 
-    <form method="post">
+    <form method="post" onsubmit="showLoader()">
         {% csrf_token %}
         {{ form.non_field_errors }}
 
@@ -63,12 +70,19 @@
         // Event listener to change assignee options based on project selection
         $('#id_project').change(function() {
             var project = $(this).val();
+            
+            // Show loader while fetching data
+            showLoader();
+
             $.ajax({
                 url: '{% url "tickets:filter_assignees_by_project" %}',  // URL to the view
                 data: {
                     'project': project
                 },
                 success: function(response) {
+                    // Hide the loader after response
+                    hideLoader();
+                    
                     // Update the assignee select dropdown with the new options
                     $('#id_assignee').html(response.assignee_options);
 
@@ -90,15 +104,27 @@
                     }
                 },
                 error: function() {
-                    // Handle error cases here if needed
+                    hideLoader(); // Hide loader if an error occurs
                     alert('An error occurred while fetching the assignees.');
                 }
             });
         });
     });
+
+    // Functions to show and hide the loader
+    function showLoader() {
+        const loader = document.getElementById('loader');
+        loader.classList.remove('d-none');
+    }
+
+    function hideLoader() {
+        const loader = document.getElementById('loader');
+        loader.classList.add('d-none');
+    }
 </script>
 
 {% endblock %}
+
 
 
 {% comment %} {% extends "base.html" %}

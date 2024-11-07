@@ -49,146 +49,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TTS{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'css/site.css' %}">
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 </head>
 <body>
     {% include 'navbar.html' %}
 
-
     <div aria-live="polite" aria-atomic="true" class="bg-body-secondary position-relative bd-example-toasts rounded-3">
-    <div class="toast-container p-3" id="toastPlacement">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header">
-                        <strong class="me-auto">Notification</strong>
-                        <small class="text-muted">{{ message.timestamp }}</small>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div class="toast-container p-3" id="toastPlacement">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">Notification</strong>
+                            <small class="text-muted">{{ message.timestamp }}</small>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ message }}
+                        </div>
                     </div>
-                    <div class="toast-body">
-                        {{ message }}
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
     </div>
-</div>
 
-<div class="blur-background" id="blur-background"></div>
+    <script>
+        const toastElements = document.querySelectorAll('.toast');
 
-<script>
-const toastElements = document.querySelectorAll('.toast');
-const blurBackground = document.getElementById('blur-background');
+        toastElements.forEach(toast => {
+            const bsToast = new bootstrap.Toast(toast, {
+                delay: 5000 // Adjust delay in milliseconds
+            });
 
-if (toastElements.length > 0) {
-  blurBackground.style.display = 'block'; // Show the blur background
-}
+            // Show the toast
+            bsToast.show();
+        });
+    </script>
 
-toastElements.forEach(toast => {
-  const bsToast = new bootstrap.Toast(toast, {
-    delay: 5000 // Adjust delay in milliseconds
-  });
-
-  // Show the toast
-  bsToast.show();
-
-  // Hide the blur background when toast is closed
-  toast.addEventListener('hidden.bs.toast', () => {
-    checkToasts();
-  });
-});
-
-// Check and hide the blur background if no toasts are present
-function checkToasts() {
-  const visibleToasts = document.querySelectorAll('.toast.show');
-  if (visibleToasts.length === 0) {
-    console.log("Toast display")
-    blurBackground.style.display = 'none'; // Hide blur background
-  }
-}
-
-document.addEventListener('DOMContentLoaded', checkToasts);
-</script>
+    <style>
+        /* Toast Container aligned to the right */
+        .toast-container {
+            position: fixed;
+            top: 20px; /* Adjust the top position as needed */
+            right: 20px; /* Align to the right */
+            z-index: 1050;
+        }
 
 
-<style>
-    /* CSS for blurred background */
-    .blur-background {
-        position: fixed; 
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.8); /* Slightly opaque background */
-        backdrop-filter: blur(5px); /* Blur effect */
-        display: none; /* Initially hidden */
-        z-index: 1000; /* Behind the toast but above other content */
-    }
-
-    /* CSS for toast container */
-    .toast-container {
-        position: fixed;
-        top: 50%; /* Center vertically */
-        left: 50%; /* Center horizontally */
-        transform: translate(-50%, -50%); /* Adjust position to center */
-        z-index: 1050; /* Ensure toasts are above the blur background */
-    }
-
-    /* Sidebar Styles */
-    .sidebar {
-        width: 250px; 
-        height: calc(100vh - 20px); /* Adjust height for top margin */
-        background-color:  #8c8aec; 
-        padding: 15px; 
-        position: fixed; 
-        left: 0; /* Align to the left */
-        top: 20px; /* Add margin from the top */
-        overflow-y: auto; 
-        transition: left 0.3s ease; /* Smooth transition for sidebar */
-        z-index: 100; /* Ensure sidebar is above main content */
-    }
-
-    /* Main Content Adjustment */
-    .main-content {
-        margin-left: 250px; /* Reduced margin-left for main content */
-        transition: margin-left 0.3s ease; /* Smooth transition for main content */
-        padding: 20px; /* Padding for main content */
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 768px) {
+        /* Sidebar Styles */
         .sidebar {
-            left: -250px; /* Start hidden off-screen */
-            top: 0; /* Reset top for small screens */
-            height: 100vh; /* Full height on small screens */
+            width: 250px; 
+            height: calc(100vh - 20px); /* Adjust height for top margin */
+            background-color:  #8c8aec; 
+            padding: 15px; 
+            position: fixed; 
+            left: 0; /* Align to the left */
+            top: 20px; /* Add margin from the top */
+            overflow-y: auto; 
+            transition: left 0.3s ease; /* Smooth transition for sidebar */
+            z-index: 100; /* Ensure sidebar is above main content */
         }
+
+        /* Main Content Adjustment */
         .main-content {
-            margin-left: 0; /* No margin when sidebar is hidden */
+            margin-left: 250px; /* Reduced margin-left for main content */
+            transition: margin-left 0.3s ease; /* Smooth transition for main content */
+            padding: 20px; /* Padding for main content */
         }
-    }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -250px; /* Start hidden off-screen */
+                top: 0; /* Reset top for small screens */
+                height: 100vh; /* Full height on small screens */
+            }
+            .main-content {
+                margin-left: 0; /* No margin when sidebar is hidden */
+            }
+        }
     </style>
 
-
-
-
-
     <main role="main" class="container-fluid">
-        <div class="row" >
+        <div class="row">
             <div class="col-md-3 ">
                 {% include 'sidebar.html' %}
             </div>
-            
-            <div class="col-md-9 main-content" >
-                <div class="container" 
-                    style="padding-top: 10px;
-                        background-color: rgb(244, 240, 240);
-                        box-shadow: 0px 10px 34px -15px rgba(0, 0, 0, 0.24); 
-                        border-radius: 10px;
-                        padding-bottom:20px;
-                        margin-top:-6%;
-                        margin-left:6%">
+            <div class="col-md-9 main-content">
+                <div class="container" style="padding-top: 10px; background-color: rgb(244, 240, 240); box-shadow: 0px 10px 34px -15px rgba(0, 0, 0, 0.24); border-radius: 10px; padding-bottom:20px; margin-top:-6%; margin-left:6%">
                     <div id="clock"></div>
                     <div id="content">
                         {% block content %}{% endblock %}
@@ -218,16 +168,15 @@ document.addEventListener('DOMContentLoaded', checkToasts);
             mainContent.style.marginLeft = isVisible ? '0' : '250px'; // Adjust main content margin
         });
 
-        // Update the visibility of the toggle button based on screen size
         function updateToggleButtonVisibility() {
             if (window.innerWidth <= 768) {
-                toggleButton.style.display = 'block'; // Show button on small screens
-                sidebar.style.left = '-250px'; // Ensure sidebar is hidden
-                mainContent.style.marginLeft = '0'; // No margin when sidebar is hidden
+                toggleButton.style.display = 'block';
+                sidebar.style.left = '-250px';
+                mainContent.style.marginLeft = '0';
             } else {
-                toggleButton.style.display = 'none'; // Hide button on larger screens
-                sidebar.style.left = '0px'; // Show sidebar by default on larger screens
-                mainContent.style.marginLeft = '250px'; // Adjust main content margin
+                toggleButton.style.display = 'none';
+                sidebar.style.left = '0px';
+                mainContent.style.marginLeft = '250px';
             }
         }
 
@@ -236,7 +185,9 @@ document.addEventListener('DOMContentLoaded', checkToasts);
     </script>
     {% endblock %}
 </body>
-</html> 
+</html>
+
+
 {% comment %} {% load static %}
 <!DOCTYPE html>
 <html lang="en">
