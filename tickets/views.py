@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .models import Changes, Ticket
-from .forms import TicketForm, CommentForm
+from .forms import EditTicketForm, TicketForm, CommentForm
 # Restrict access to the index view to authenticated users only.
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -586,57 +586,74 @@ def filter_assignees_by_project(request):
 
     return JsonResponse(response_data)
     
-@login_required
+# @login_required
+# def edit_ticket(request, ticket_id):
+#     ticket = Ticket.objects.get(pk=ticket_id)
+#     if request.method == 'POST':
+#         # We want to create a new comment entry with the details of the changes made to the ticket.
+#         changes = []
+#         if User.objects.get(pk=request.POST['assignee']).id != ticket.assignee.id:
+#             try:
+#                 changes.append(f"Assigned: {ticket.assignee} -> {User.objects.get(pk=request.POST['assignee'])}")
+#             except User.DoesNotExist:
+#                 return JsonResponse({'error': 'Invalid assignee'}, status=400)
+#         if request.POST['priority'] != ticket.priority:
+#             if request.POST['priority'] not in Ticket.Priority:
+#                 return JsonResponse({'error': 'Invalid priority value'}, status=400)
+#             changes.append(f"Priority: {ticket.priority} -> {request.POST['priority']}")
+#         if request.POST['category'] != ticket.category:
+#             if request.POST['category'] not in Ticket.Category:
+#                 return JsonResponse({'error': 'Invalid category value'}, status=400)
+#             changes.append(f"Category: {ticket.category} -> {request.POST['category']}")
+#         if request.POST['title'] != ticket.title:
+#             changes.append(f"Title: {ticket.title} -> {request.POST['title']}")
+#         if request.POST['description'] != ticket.description:
+#             changes.append(f"Description: {ticket.description} -> {request.POST['description']}")
+#         if request.POST['status'] != ticket.status:
+#             if request.POST['status'] not in Ticket.Status:
+#                 return JsonResponse({'error': 'Invalid status value'}, status=400)
+#             changes.append(f"Status: {ticket.status} -> {request.POST['status']}")
+#         # we have an issue with the date format, it is  reporting Due date: 2024-10-08 00:00:00+00:00 -> 2024-10-08 when actually the date is 2024-10-08 00:00:00
+#         # we need to fix this, we can use the date filter to format the date
+#         ticket_due_date = ticket.due_date.isoformat() if ticket.due_date else ""
+#         if request.POST['due_date'] != "" and request.POST['due_date'] != ticket_due_date:
+#             changes.append(f"Due date: {ticket.due_date} -> {request.POST['due_date']}")
+#         if changes:
+#             ticket.comments.create(
+#                 author=request.user,
+#                 comment=";\n".join(changes)
+#             )
+#             messages.success(request, f'Ticket #{ticket_id}  updated successfully')
+#             log_activity(ticket, request.user, "Changes to ticket")
+#         ticket.title = request.POST['title']
+#         ticket.description = request.POST['description']
+#         ticket.priority = request.POST['priority']
+#         ticket.category = request.POST['category']
+#         ticket.assignee = User.objects.get(pk=request.POST['assignee'])
+#         ticket.status = request.POST['status']
+#         if request.POST['due_date'] != "":
+#             ticket.due_date = request.POST['due_date']
+#         ticket.save()
+#         return redirect('tickets:ticket_detail', ticket_id=ticket_id)
+#     else:
+#         return render(request, 'tickets/edit_ticket.html', {'ticket': ticket, 'edit_form': TicketForm(instance=ticket)})
+
 def edit_ticket(request, ticket_id):
-    ticket = Ticket.objects.get(pk=ticket_id)
-    if request.method == 'POST':
-        # We want to create a new comment entry with the details of the changes made to the ticket.
-        changes = []
-        if User.objects.get(pk=request.POST['assignee']).id != ticket.assignee.id:
-            try:
-                changes.append(f"Assigned: {ticket.assignee} -> {User.objects.get(pk=request.POST['assignee'])}")
-            except User.DoesNotExist:
-                return JsonResponse({'error': 'Invalid assignee'}, status=400)
-        if request.POST['priority'] != ticket.priority:
-            if request.POST['priority'] not in Ticket.Priority:
-                return JsonResponse({'error': 'Invalid priority value'}, status=400)
-            changes.append(f"Priority: {ticket.priority} -> {request.POST['priority']}")
-        if request.POST['category'] != ticket.category:
-            if request.POST['category'] not in Ticket.Category:
-                return JsonResponse({'error': 'Invalid category value'}, status=400)
-            changes.append(f"Category: {ticket.category} -> {request.POST['category']}")
-        if request.POST['title'] != ticket.title:
-            changes.append(f"Title: {ticket.title} -> {request.POST['title']}")
-        if request.POST['description'] != ticket.description:
-            changes.append(f"Description: {ticket.description} -> {request.POST['description']}")
-        if request.POST['status'] != ticket.status:
-            if request.POST['status'] not in Ticket.Status:
-                return JsonResponse({'error': 'Invalid status value'}, status=400)
-            changes.append(f"Status: {ticket.status} -> {request.POST['status']}")
-        # we have an issue with the date format, it is  reporting Due date: 2024-10-08 00:00:00+00:00 -> 2024-10-08 when actually the date is 2024-10-08 00:00:00
-        # we need to fix this, we can use the date filter to format the date
-        ticket_due_date = ticket.due_date.isoformat() if ticket.due_date else ""
-        if request.POST['due_date'] != "" and request.POST['due_date'] != ticket_due_date:
-            changes.append(f"Due date: {ticket.due_date} -> {request.POST['due_date']}")
-        if changes:
-            ticket.comments.create(
-                author=request.user,
-                comment=";\n".join(changes)
-            )
-            messages.success(request, f'Ticket #{ticket_id}  updated successfully')
-            log_activity(ticket, request.user, "Changes to ticket")
-        ticket.title = request.POST['title']
-        ticket.description = request.POST['description']
-        ticket.priority = request.POST['priority']
-        ticket.category = request.POST['category']
-        ticket.assignee = User.objects.get(pk=request.POST['assignee'])
-        ticket.status = request.POST['status']
-        if request.POST['due_date'] != "":
-            ticket.due_date = request.POST['due_date']
-        ticket.save()
-        return redirect('tickets:ticket_detail', ticket_id=ticket_id)
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    if request.method == "POST":
+        form = EditTicketForm(request.POST, instance=ticket)
+        if form.is_valid():
+            ticket.status = form.cleaned_data['status']
+            ticket.save(update_fields=['status'])  # Only `status` is updated
+
+            messages.success(request, "Ticket status updated successfully.")
+            return redirect('tickets:ticket_detail', ticket_id=ticket.id)
+        else:
+            messages.error(request, "There was an error updating the ticket.")
     else:
-        return render(request, 'tickets/edit_ticket.html', {'ticket': ticket, 'edit_form': TicketForm(instance=ticket)})
+        form = EditTicketForm(instance=ticket, user=request.user)
+    return render(request, 'tickets/edit_ticket.html', {'form': form, 'ticket': ticket})
+
     
 @login_required
 def hide_ticket(request, ticket_id):

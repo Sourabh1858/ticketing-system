@@ -1,15 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "tickets/header.html" %}
-    <h1>Edit Ticket #{{ticket.id}}</h1>
+    <!-- Loader Section -->
+    <div id="loader" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style="z-index: 1050;">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <h1>Edit Ticket #{{ ticket.id }}</h1>
+    <form id="editTicketForm" method="post" onsubmit="showLoader(event)">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    <a href="{% url 'tickets:ticket_detail' ticket.id %}">Back to detail</a>
+
+    <script>
+        function showLoader(event) {
+            // Prevent the form from submitting immediately
+            event.preventDefault();
+            
+            // Show the loader
+            const loader = document.getElementById('loader');
+            loader.classList.remove('d-none');
+            
+            // Delay form submission by 3 seconds
+            setTimeout(() => {
+                document.getElementById('editTicketForm').submit(); // Submit the form after 3 seconds
+            }, 3000);
+        }
+    </script>
+{% endblock %}
+
+{% comment %} {% extends "base.html" %}
+{% block content %}
+    <h1>Edit Ticket #{{ ticket.id }}</h1>
     <form method="post">
         {% csrf_token %}
-        {{ edit_form.as_p }}
-        <button  class="btn btn-primary" type="submit">Submit</button>
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Submit</button>
     </form>
-	<br/>
-	<br/>
-	<br/>
     <a href="{% url 'tickets:ticket_detail' ticket.id %}">Back to detail</a>
-{% endblock %}
+{% endblock %} {% endcomment %}
