@@ -120,6 +120,7 @@
         <div class="container-fluid">
             <div class="project-name" style="font-weight: bold;">TTS</div>
             <ul class="navbar-nav d-flex">
+                <a href="{% url 'accounts:dashboard' %}" class="nav-link">Dashboard</a>
                 <li class="nav-item">
                     {% if user.is_authenticated %}
                     <a href="{% url 'accounts:profile' %}" class="nav-link d-inline">({{ user.username }})</a>

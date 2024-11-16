@@ -548,23 +548,55 @@ def in_progress_view(request):
 #         return render(request, 'tickets/ticket_detail.html', {'ticket': ticket})
 #     else:
 #         return render(request, 'tickets/new_ticket.html', {"form": TicketForm()})
-@login_required
+#@login_required
+# def new_ticket(request):
+#     if request.method == 'POST':
+#         form = TicketForm(request.POST)
+#         if form.is_valid():
+#             ticket = form.save(commit=False)
+#             ticket.issuer = request.user
+#             ticket.save()
+#             log_activity(ticket, request.user, "Created ticket")
+#             return redirect('tickets:index')  # Redirect to the ticket list after creation
+#     else:
+#         form = TicketForm()
+    
+#     return render(request, 'tickets/new_ticket.html', {'form': form})
+
 def new_ticket(request):
     if request.method == 'POST':
         form = TicketForm(request.POST)
         if form.is_valid():
             ticket = form.save(commit=False)
-            ticket.issuer = request.user
-            ticket.save()
-            log_activity(ticket, request.user, "Created ticket")
-            return redirect('tickets:index')  # Redirect to the ticket list after creation
+            
+            # Assign the issuer only if the user is authenticated
+            if request.user.is_authenticated:
+                ticket.issuer = request.user
+            else:
+                ticket.issuer = None  # Set issuer to None if user is anonymous
+            
+            ticket.save()  # Save the ticket to the database
+            
+            # Optionally log activity if the user is authenticated
+            if request.user.is_authenticated:
+                log_activity(ticket, request.user, "Created ticket")
+            
+            # Set a success message
+            messages.success(request, 'Ticket raised successfully!')
+
+            # Redirect based on whether the user is logged in or not
+            if request.user.is_authenticated:
+                return redirect('tickets:index')  # Redirect to the index page if logged in
+            else:
+                return redirect('accounts:dashboard')  # Redirect to the dashboard page if not logged in
+
     else:
         form = TicketForm()
-    
+
     return render(request, 'tickets/new_ticket.html', {'form': form})
 
 
-@login_required
+#@login_required
 def filter_assignees_by_project(request):
     project = request.GET.get('project')
     users_with_project = NewUser.objects.filter(project=project).values_list('user', flat=True)

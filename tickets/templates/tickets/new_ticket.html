@@ -11,7 +11,7 @@
 <div class="container mt-4">
     <!-- Toast notifications for messages -->
     <div aria-live="polite" aria-atomic="true" class="bg-body-secondary position-relative bd-example-toasts rounded-3">
-        <div class="toast-container p-3" id="toastPlacement">
+        <div class="toast-container p-3" id="toastPlacement" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050;">
             {% if messages %}
                 {% for message in messages %}
                     <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
@@ -28,7 +28,19 @@
             {% endif %}
         </div>
     </div>
-
+<div style="margin-top: 60px">
+    {% if not user.is_authenticated %}
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Include header on the left side -->
+            {% include "tickets/header.html" %}
+            
+            <!-- Button aligned to the right -->
+            <div>
+                <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+            </div>
+        </div>
+    {% endif %}
+</div><br>
     <h1 class="mb-4">New Ticket</h1>
 
     <form method="post" onsubmit="showLoader()">
@@ -62,7 +74,8 @@
 
         <button class="btn btn-primary" type="submit">Submit</button>
     </form>
-</div>
+
+</div><br>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -124,71 +137,3 @@
 </script>
 
 {% endblock %}
-
-
-
-{% comment %} {% extends "base.html" %}
-
-{% block content %}
-{% include "tickets/header.html" %}
-<div class="container mt-4">
-    <h1 class="mb-4">New Ticket</h1>
-
-    <form method="post">
-        {% csrf_token %}
-        
-        <!-- Applying Bootstrap form styling -->
-        <div class="mb-3">
-            {{ form.non_field_errors }}
-        </div>
-        
-        {% for field in form %}
-        <div class="mb-3">
-            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-            {{ field }}
-            {% if field.help_text %}
-            <div class="form-text">{{ field.help_text }}</div>
-            {% endif %}
-            {% if field.errors %}
-            <div class="invalid-feedback d-block">
-                {% for error in field.errors %}
-                    <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        {% endfor %}
-	
-        <button class="btn btn-primary" type="submit">Submit</button>
-	<br/>
-	<br/>
-	<br/>
-	<a href="{% url 'tickets:index' %}" class="btn btn-secondary">Back to list</a>
-    </form>
-</div>
-<!-- JavaScript for dynamically loading assignees based on project selection -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#id_project').change(function() {
-            var project = $(this).val();
-            $.ajax({
-                url: "{% url 'tickets:get_assignees' %}",
-                data: {
-                    'project': project
-                },
-                success: function(data) {
-                    var assigneeField = $('#id_assignee');
-                    assigneeField.empty();  // Clear existing options
-                    $.each(data.assignees, function(key, value) {
-                        assigneeField.append($('<option>', {
-                            value: value.id,
-                            text: value.username
-                        }));
-                    });
-                }
-            });
-        });
-    });
-</script>
-{% endblock %} {% endcomment %}

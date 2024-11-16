@@ -11,47 +11,87 @@ from .utils import log_activity
 from django.core.paginator import Paginator
 from .models import Activity,NewUser
 
-
+# def login_view(request):
+#     try:
+#         if request.method == 'POST':
+#             sudo = False
+#             username = request.POST['username']
+#             if ":" in username:
+#                 username = username.split(":")
+#                 sudoer = username[0]
+#                 target_username = username[1]
+#                 sudo = True
+#             password = request.POST['password']
+#             if sudo:
+#                 user = authenticate(request, username=sudoer, password=password)
+#                 if user is not None:
+#                     if user.is_superuser:
+#                         target_user = User.objects.get(username=target_username)
+#                         login(request, target_user)
+#                         log_activity(target_user, 'LOGIN',level='INFO' ,log='Sudo login by ' + sudoer)
+#                         return redirect('tickets:index')
+#                     else:
+#                         log_activity(user.username,'LOGIN', level='WARNING', log='Failed sudo login attempt: not authorized to use sudo.')
+#                         messages.error(request, 'You are not authorized to use sudo.')
+#                 else:
+#                     log_activity('anonymous','LOGIN',  level='WARNING', log=f'Failed sudo login attempt: invalid username ({sudoer}) or password.')
+#                     messages.error(request, 'Invalid username or password.')
+#             else:
+#                 user = authenticate(request, username=username, password=password)
+#                 if user is not None:
+#                     login(request, user)
+#                     log_activity(user.username, 'LOGIN', level='INFO', log=f'Successful login.')
+#                     return redirect('tickets:index')
+#                 else:
+#                     messages.error(request, 'Invalid username or password.')
+#                     log_activity('anonymous', 'LOGIN',  level='WARNING', log=f'Failed login attempt: invalid username ({username}) or password.')
+#         # return render(request, 'accounts/login.html', {'form': LoginForm()})
+#         return render(request, "accounts/index.html", {"form": LoginForm()})
+#     except Exception as e :
+#         print(e)
 def login_view(request):
     try:
         if request.method == 'POST':
             sudo = False
-            username = request.POST['username']
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+
+            # Check if username contains sudo pattern
             if ":" in username:
-                username = username.split(":")
-                sudoer = username[0]
-                target_username = username[1]
+                sudoer, target_username = username.split(":", 1)
                 sudo = True
-            password = request.POST['password']
-            if sudo:
-                user = authenticate(request, username=sudoer, password=password)
-                if user is not None:
-                    if user.is_superuser:
-                        target_user = User.objects.get(username=target_username)
-                        login(request, target_user)
-                        log_activity(target_user, 'LOGIN',level='INFO' ,log='Sudo login by ' + sudoer)
-                        return redirect('tickets:index')
-                    else:
-                        log_activity(user.username,'LOGIN', level='WARNING', log='Failed sudo login attempt: not authorized to use sudo.')
-                        messages.error(request, 'You are not authorized to use sudo.')
-                else:
-                    log_activity('anonymous','LOGIN',  level='WARNING', log=f'Failed sudo login attempt: invalid username ({sudoer}) or password.')
-                    messages.error(request, 'Invalid username or password.')
             else:
-                user = authenticate(request, username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    log_activity(user.username, 'LOGIN', level='INFO', log=f'Successful login.')
+                target_username = username
+
+            if sudo:
+                # Authenticate sudoer first
+                sudo_user = authenticate(request, username=sudoer, password=password)
+                if sudo_user and sudo_user.is_superuser:
+                    # Authenticate target user
+                    target_user = User.objects.get(username=target_username)
+                    login(request, target_user)
+                    log_activity(target_user.username, 'LOGIN', level='INFO', log=f'Sudo login by {sudoer}')
                     return redirect('tickets:index')
                 else:
+                    log_activity(sudoer, 'LOGIN', level='WARNING', log='Failed sudo login attempt: not authorized or invalid credentials.')
+                    messages.error(request, 'Invalid sudo login attempt.')
+            else:
+                # Standard login process
+                user = authenticate(request, username=target_username, password=password)
+                if user:
+                    login(request, user)
+                    log_activity(user.username, 'LOGIN', level='INFO', log='Successful login.')
+                    return redirect('tickets:my_tasks' if not user.is_superuser else 'tickets:index')
+                else:
+                    log_activity('anonymous', 'LOGIN', level='WARNING', log=f'Failed login attempt for username: {target_username}')
                     messages.error(request, 'Invalid username or password.')
-                    log_activity('anonymous', 'LOGIN',  level='WARNING', log=f'Failed login attempt: invalid username ({username}) or password.')
-        # return render(request, 'accounts/login.html', {'form': LoginForm()})
-        return render(request, "accounts/index.html", {"form": LoginForm()})
-    except Exception as e :
-        print(e)
-
-
+        
+        return render(request, 'accounts/index.html', {'form': LoginForm()})
+    
+    except Exception as e:
+        print(f"Error in login_view: {e}")
+        messages.error(request, 'An unexpected error occurred. Please try again.')
+        return redirect('tickets:login')
 
 
 @login_required
@@ -72,7 +112,7 @@ def admin_board_view(request):
 def logout_view(request):
     log_activity(request.user, 'LOGOUT', level='INFO', log='Logout.')
     logout(request)
-    return render(request,'accounts/index.html')
+    return redirect('accounts:login')
 
 @login_required
 def profile_view(request):
@@ -100,6 +140,26 @@ def profile_view(request):
 
 
 
+# @login_required
+# def password_change_view(request):
+#     if request.method == 'POST':
+#         user = request.user
+#         old_password = request.POST['old_password']
+#         new_password = request.POST['new_password']
+#         confirm_password = request.POST['confirm_password']
+#         if user.check_password(old_password):
+#             if new_password == confirm_password:
+#                 user.set_password(new_password)
+#                 user.save()
+#                 messages.success(request, 'Password changed successfully.')
+#                 log_activity(user.username,'UPDATE', level='INFO', log='Password changed.')
+#                 return redirect('accounts:profile')
+#             else:
+#                 messages.error(request, 'New password and confirm password do not match.')
+#         else:
+#             messages.error(request, 'Invalid old password.')
+            
+#     return render(request, 'accounts/password_change.html', {'form': PasswordChangeForm()})
 @login_required
 def password_change_view(request):
     if request.method == 'POST':
@@ -111,12 +171,17 @@ def password_change_view(request):
             if new_password == confirm_password:
                 user.set_password(new_password)
                 user.save()
-                messages.success(request, 'Password changed successfully.')
+                messages.success(request, 'Password changed successfully. Click here to log in.')
                 log_activity(user.username,'UPDATE', level='INFO', log='Password changed.')
-                return redirect('accounts:profile')
+                return render(request, 'accounts/password_change.html', {'form': PasswordChangeForm(), 'disable_base_toast': True})
             else:
                 messages.error(request, 'New password and confirm password do not match.')
         else:
             messages.error(request, 'Invalid old password.')
-            
-    return render(request, 'accounts/password_change.html', {'form': PasswordChangeForm()})
+
+    return render(request, 'accounts/password_change.html', {'form': PasswordChangeForm(), 'disable_base_toast': True})
+
+
+
+def dashboard(request):
+    return render(request, 'accounts/dashboard.html')

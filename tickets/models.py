@@ -27,7 +27,7 @@ class Ticket(models.Model):
         RESOLVED = 'RESOLVED'
         CLOSED = 'CLOSED'
         CANCELLED = 'CANCELLED'
-    issuer = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='issued_tickets')
+    issuer = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='issued_tickets', null=True, blank=True)
     assignee = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='assignee_tickets')
     priority = models.CharField(max_length=6, choices=Priority.choices, default=Priority.LOW)
     category = models.CharField(max_length=7, choices=Category.choices, default=Category.FEATURE)
